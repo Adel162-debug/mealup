@@ -245,6 +245,21 @@
             font: inherit;
             cursor: pointer;
         }
+        .pantry-quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .pantry-quick-actions button {
+            cursor: pointer;
+        }
+
+        .pantry-quick-actions .pantry-use-soon {
+            border-color: #e4af55;
+            background: #fff0cd;
+            color: #714500;
+        }
     </style>
 @endpush
 
@@ -270,6 +285,16 @@
                     {{ $category }}
                 </button>
             @endforeach
+        </div>
+
+        <div class="pantry-quick-actions" role="group" aria-label="Pilihan cepat bahan">
+            <button type="button" id="pantry-select-all" class="pantry-filter">
+                Select All Available
+            </button>
+
+            <button type="button" id="pantry-select-use-soon" class="pantry-filter pantry-use-soon">
+                Select Use Soon
+            </button>
         </div>
 
         <input type="search"
@@ -307,8 +332,9 @@
 
         <tbody>
             @foreach ($ingredients as $ingredient)
-                <tr data-ingredient-name="{{ $ingredient['name'] }}"
-                    data-category="{{ $ingredient['category'] }}">
+                <<tr data-ingredient-name="{{ $ingredient['name'] }}"
+                    data-category="{{ $ingredient['category'] }}"
+                    data-status="{{ $ingredient['status'] }}">
                     <td>
                 <input type="checkbox"
                     aria-label="Pilih {{ $ingredient['name'] }}">
@@ -415,7 +441,7 @@
 
 <script>
     const searchInput = document.querySelector('.pantry-search');
-    const filterButtons = document.querySelectorAll('.pantry-filter');
+    const filterButtons = document.querySelectorAll('.pantry-filters .pantry-filter');
     const emptyState = document.querySelector('#pantry-empty-state');
     const pantryTable = document.querySelector('.pantry-table');
     const selectionForm = document.querySelector('#pantry-recipe-form');
@@ -423,6 +449,25 @@
     const selectionList = document.querySelector('#pantry-selection-list');
     const selectionFields = document.querySelector('#pantry-selection-fields');
     const clearSelectionButton = document.querySelector('#pantry-clear-selection');
+
+    const selectAllButton = document.querySelector('#pantry-select-all');
+    const selectUseSoonButton = document.querySelector('#pantry-select-use-soon');
+
+    function checkMatchingIngredients(selector) {
+        pantryTable.querySelectorAll(selector).forEach((checkbox) => {
+            checkbox.checked = true;
+        });
+
+        updateSelection();
+    }
+
+    selectAllButton.addEventListener('click', () => {
+        checkMatchingIngredients('tbody tr[data-ingredient-name] input[type="checkbox"]');
+    });
+
+    selectUseSoonButton.addEventListener('click', () => {
+        checkMatchingIngredients('tbody tr[data-status="Use Soon"] input[type="checkbox"]');
+    });
 
     function getCheckedIngredients() {
         return pantryTable.querySelectorAll('tbody input[type="checkbox"]:checked');
@@ -572,6 +617,7 @@
         const row = document.createElement('tr');
         row.dataset.ingredientName = name;
         row.dataset.category = category;
+        row.dataset.status = status;
 
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
