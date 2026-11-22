@@ -35,46 +35,81 @@
             z-index: 30;
             inset: 0 auto 0 0;
             display: flex;
-            width: 271px;
             flex-direction: column;
+            width: 271px;
+            padding: 24px 20px;
+            overflow-y: auto;
             background: #fff;
-            box-shadow: 2px 0 7px rgba(0, 0, 0, 0.07);
+            border-right: 1px solid #eee5d8;
         }
-        .logo-img {
-            width: 192px;
-            height: 79px;
-            margin: 44px auto 34px;
-            object-fit: cover;
-            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
-        }
-        .nav-link {
+
+        .meal-sidebar-brand {
             display: flex;
-            width: 100%;
-            align-items: center;
-            gap: 12px;
-            border-left: 10px solid transparent;
-            border-radius: 0 7px 7px 0;
-            padding: 12px 20px;
-            color: #43271b;
-            text-align: left;
-            font-weight: 600;
-            font-size: 18px;
-            transition: background 180ms ease, color 180ms ease, transform 180ms ease;
-            background: transparent;
-            cursor: pointer;
-            border: none;
+            justify-content: center;
+            margin: 10px 0 36px;
         }
-        .nav-link:hover {
-            transform: translateX(3px);
+
+        .meal-sidebar-brand img {
+            display: block;
+            width: 170px;
+            height: auto;
+        }
+
+        .meal-sidebar-menu {
+            display: grid;
+            gap: 8px;
+        }
+
+        .meal-sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            width: 100%;
+            min-height: 52px;
+            padding: 10px 16px;
+            border: 0;
+            border-left: 5px solid transparent;
+            border-radius: 14px;
+            background: transparent;
+            color: #3b2010;
+            font-weight: 600;
+            text-align: left;
+            text-decoration: none;
+        }
+
+        .meal-sidebar-icon {
+            display: inline-grid;
+            width: 24px;
+            place-items: center;
+            font-size: 22px;
+            line-height: 1;
+        }
+
+        .meal-sidebar-item:hover:not(:disabled) {
             background: #fbf7ee;
         }
-        .nav-link--active {
+
+        .meal-sidebar-item[aria-current="page"],
+        .meal-sidebar-item[aria-current="page"]:hover {
             border-left-color: #b06800;
-            background: #43271b;
+            background: #3b2010;
             color: #fff;
         }
-        .nav-link--active:hover {
-            background: #43271b;
+
+        .meal-sidebar-item:focus-visible {
+            outline: 2px solid #b06800;
+            outline-offset: 2px;
+        }
+
+        .meal-sidebar-item:disabled {
+            opacity: 0.55;
+            cursor: default;
+        }
+
+        .meal-sidebar-footer {
+            margin-top: auto;
+            padding-top: 16px;
+            border-top: 1px solid #eee5d8;
         }
         .main-content {
             position: relative;
@@ -94,27 +129,41 @@
 <body class="bg-mealCream text-mealBrown font-sans antialiased selection:bg-amber-200">
 
     <div class="app-shell">
-        <!-- SIDEBAR -->
-        <aside id="sidebar" class="sidebar">
-            <a href="/">
-                <img src="{{ asset('assets/73d6a.png') }}" alt="Meal Up Logo" class="logo-img" />
-            </a>
-            <nav class="grid gap-[6px]">
-                <button class="nav-link nav-link--active">
-                    <span>🏠</span> Home
-                </button>
-                <button onclick="openDialog('pantry')" class="nav-link">
-                    <span>🥫</span> Pantry
-                </button>
-                <button onclick="openDialog('recipes')" class="nav-link">
-                    <span>🍲</span> Recipes
-                </button>
-            </nav>
-            <div class="mt-auto p-[30px_20px_56px]">
-                <a href="/" class="nav-link text-red-700 hover:text-red-800">
-                    <span>🚪</span> Logout
-                </a>
-            </div>
+<!-- SIDEBAR -->
+<aside id="sidebar" class="sidebar">
+    <a href="{{ url('/home') }}" class="meal-sidebar-brand">
+        <img src="{{ asset('assets/73d6a.png') }}" alt="Meal Up">
+    </a>
+
+    <nav class="meal-sidebar-menu" aria-label="Navigasi utama">
+        <a href="{{ url('/home') }}" class="meal-sidebar-item" aria-current="page">
+            <span class="meal-sidebar-icon" aria-hidden="true">⌂</span>
+            <span>Home</span>
+        </a>
+
+        <button type="button" class="meal-sidebar-item" onclick="openDialog('pantry')">
+            <span class="meal-sidebar-icon" aria-hidden="true">▣</span>
+            <span>Pantry</span>
+        </button>
+
+        <button type="button" class="meal-sidebar-item" onclick="openDialog('recipes')">
+            <span class="meal-sidebar-icon" aria-hidden="true">▤</span>
+            <span>Recipe</span>
+        </button>
+
+        <button type="button" class="meal-sidebar-item" disabled>
+            <span class="meal-sidebar-icon" aria-hidden="true">★</span>
+            <span>Saved</span>
+        </button>
+    </nav>
+
+    <div class="meal-sidebar-footer">
+        <button type="button" class="meal-sidebar-item" disabled>
+            <span class="meal-sidebar-icon" aria-hidden="true">↪</span>
+            <span>Logout</span>
+        </button>
+    </div>
+</aside>
         </aside>
 
         <!-- MAIN CONTENT AREA -->
