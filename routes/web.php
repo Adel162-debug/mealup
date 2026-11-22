@@ -13,3 +13,8 @@ Route::get('/', function () {
 Route::get('/home', function () {
     return view('home');
 });
+
+Route::view('/pantry', 'pantry')->name('pantry.index');
+
+Route::view('/recipes', 'recipe')->name('recipes.index');
+
