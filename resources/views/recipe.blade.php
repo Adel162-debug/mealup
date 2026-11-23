@@ -1,6 +1,6 @@
 @extends('layouts.mealup')
 
-@section('title', 'Recipe')
+@section('title', request()->routeIs('saved.index') ? 'Saved' : 'Recipe')
 
 @push('styles')
     <style>
@@ -448,9 +448,40 @@
         }
 
         .recipe-cooked summary {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            align-items: center;
+            gap: 12px;
             color: var(--meal-brown);
-            font-weight: 700;
             cursor: pointer;
+            list-style: none;
+        }
+
+        .recipe-cooked summary::-webkit-details-marker { display: none; }
+
+        .recipe-cooked-intro {
+            display: grid;
+            gap: 4px;
+        }
+
+        .recipe-cooked-intro small {
+            color: #6e6056;
+            font-size: .875rem;
+        }
+
+        .recipe-cooked-action {
+            padding: 11px 14px;
+            border-radius: 12px;
+            background: var(--meal-brown);
+            color: #fff;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .recipe-cooked summary:hover .recipe-cooked-action { background: #51311e; }
+
+        @media (max-width: 520px) {
+            .recipe-cooked summary { grid-template-columns: minmax(0, 1fr); }
         }
 
         .recipe-cooked p {
@@ -521,6 +552,124 @@
 
         .recipe-cooked-history li + li { border-top: 1px solid var(--meal-border); }
         .recipe-cooked-history time { color: #6e6056; font-size: .875rem; }
+        .saved-recipe-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px 12px;
+            margin: 20px 0 28px;
+        }
+
+        .recipe-search .saved-category-label {
+            position: static;
+            width: auto;
+            height: auto;
+            margin: 0 0 0 auto;
+            clip-path: none;
+            color: #74685f;
+        }
+
+        #saved-recipe-category {
+            padding: 10px 14px;
+            border: 1px solid var(--meal-brown);
+            border-radius: 999px;
+            background: var(--meal-brown);
+            color: #fff;
+            font: inherit;
+            font-weight: 650;
+        }
+
+        .recipe-search-field {
+            position: relative;
+        }
+
+        .recipe-search-field input {
+            min-height: 52px;
+            padding-inline-start: 48px;
+        }
+
+        .recipe-search-icon {
+            position: absolute;
+            inset-inline-start: 17px;
+            top: 50%;
+            width: 21px;
+            height: 21px;
+            color: #74685f;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .recipe-card--catalog .recipe-video-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            top: 16px;
+            left: 16px;
+            padding: 6px 11px;
+            border: 1px solid #ad7a32;
+            background: rgb(59 32 16 / 90%);
+            color: #fff;
+        }
+
+        .recipe-card--catalog .recipe-card-duration { right: 16px; bottom: 16px; }
+
+        .recipe-card--catalog .recipe-card-body,
+        .recipe-card--saved .recipe-card-body {
+            padding: clamp(16px, 1.5vw, 22px);
+        }
+
+        .recipe-card-footer {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .recipe-card-heading { min-width: 0; }
+        .recipe-card-heading p {
+            margin: 4px 0 0;
+            color: #74685f;
+            font-size: .9rem;
+        }
+
+        .recipe-card-heading .recipe-detail-trigger { overflow-wrap: anywhere; }
+        .recipe-card--saved .recipe-detail-trigger:hover { color: var(--meal-brown); }
+
+        .recipe-favorite {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
+            padding: 0;
+            place-items: center;
+            border: 0;
+            border-radius: 50%;
+            background: transparent;
+            color: var(--meal-brown);
+            cursor: pointer;
+        }
+
+        .recipe-favorite:hover { background: #fbf3e3; }
+        .recipe-favorite-icon { display: block; width: 23px; height: 23px; pointer-events: none; }
+        .recipe-favorite[aria-pressed="true"] .recipe-favorite-icon { fill: currentColor; }
+
+        .recipe-detail-actions button {
+            display: grid;
+            width: 42px;
+            height: 42px;
+            place-items: center;
+            line-height: 1;
+        }
+
+        .saved-card-category {
+            margin: 15px 0 0;
+            padding: 5px 11px;
+            border-color: var(--meal-brown);
+            color: var(--meal-brown);
+            font-weight: 600;
+        }
     </style>
 @endpush
 
@@ -541,6 +690,8 @@
         ->unique()
         ->values();
 
+    $isSavedPage = request()->routeIs('saved.index');
+    $recipeCategories = ['Main Course', 'Snack', 'Dessert', 'Others'];
     $prioritizeUseSoon = request()->query('priority') !== 'off';
 
         $recipes = collect(config('mealup.recipes', []));
@@ -564,8 +715,8 @@
         $readyRecipes = $recipes->filter(fn (array $recipe) => $recipe['missing_ingredients'] === []);
 
         $showCatalog = request()->query('mode') === 'catalog';
-        $visibleRecipes = $showCatalog ? $recipes : $readyRecipes;
-        if ($prioritizeUseSoon) {
+        $visibleRecipes = $isSavedPage || $showCatalog ? $recipes : $readyRecipes;
+        if (!$isSavedPage && $prioritizeUseSoon) {
             $visibleRecipes = $visibleRecipes->sortByDesc('use_soon_count');
         }
 
@@ -588,6 +739,14 @@
 @endphp
 
 @section('content')
+    @if ($isSavedPage)
+        <header class="recipe-page-header">
+            <div>
+                <h1>Saved</h1>
+                <p>Your favorite recipes and cooking history</p>
+            </div>
+        </header>
+    @else
     <header class="recipe-page-header">
         <div>
             <h1>Recipes</h1>
@@ -651,8 +810,10 @@
             class="recipe-card-ingredients recipe-available-ingredients"
             aria-label="Bahan Pantry yang bisa ditambahkan" hidden></ul>
     </section>
+    @endif
 
-        <section aria-labelledby="ready-recipes-heading">
+        <section @if ($isSavedPage) aria-label="Resep favorit" @else aria-labelledby="ready-recipes-heading" @endif>
+            @unless ($isSavedPage)
             <div class="recipe-results-heading">
                 <h2 id="ready-recipes-heading">
                     {{ $showCatalog ? 'Explore All Catalog' : '100% Ready to Cook' }}
@@ -664,20 +825,42 @@
                     Use Soon Priority: {{ $prioritizeUseSoon ? 'ON' : 'OFF' }}
                 </a>
             </div>
+            @endunless
 
-
-            @if ($visibleRecipes->isEmpty())
+            @if (!$isSavedPage && $visibleRecipes->isEmpty())
                 <p>{{ $selectedIngredients->isEmpty()
                     ? 'Pilih bahan di Pantry atau buka katalog untuk menjelajahi resep.'
                     : 'Belum ada resep yang cocok dengan bahan pilihanmu.' }}</p>
             @else
-                <div class="recipe-search">
-                    <label for="recipe-search-input">Search recipes or ingredients</label>
-                    <input type="search"
-                        id="recipe-search-input"
-                        placeholder="e.g., Omelet or Spinach">
+                <div class="recipe-search{{ $isSavedPage ? ' recipe-search--saved' : '' }}">
+                    <label for="recipe-search-input">
+                        {{ $isSavedPage ? 'Search saved recipes' : 'Search recipes or ingredients' }}
+                    </label>
+                    <div class="recipe-search-field">
+                        <svg class="recipe-search-icon" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+                            <circle cx="10.5" cy="10.5" r="6.5"/>
+                            <path d="m16 16 4 4"/>
+                        </svg>
+                        <input type="search"
+                               id="recipe-search-input"
+                               placeholder="{{ $isSavedPage ? 'Search saved recipes' : 'Search recipes or ingredients' }}">
+                    </div>
+
+                    @if ($isSavedPage)
+                        <div class="saved-recipe-toolbar">
+                            <strong id="saved-recipe-results" role="status">0 recipes</strong>
+                            <label class="saved-category-label" for="saved-recipe-category">Category:</label>
+                            <select id="saved-recipe-category">
+                                <option value="All">All Categories</option>
+                                @foreach ($recipeCategories as $category)
+                                    <option value="{{ $category }}">{{ $category }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    @else
                 <div class="recipe-filters" role="group" aria-label="Kategori resep">
-                    @foreach (['All', 'Main Course', 'Snack', 'Dessert', 'Others'] as $category)
+                    @foreach (array_merge(['All'], $recipeCategories) as $category)
                         <button type="button"
                                 class="recipe-filter"
                                 data-category="{{ $category }}"
@@ -686,6 +869,7 @@
                         </button>
                     @endforeach
                 </div>
+                    @endif
                     <p id="recipe-search-empty" role="status" hidden>
                         Tidak ada resep yang sesuai dengan pencarian atau kategori ini.
                     </p>
@@ -700,17 +884,23 @@
                                 default => '2aef4.png',
                             };
                         @endphp
-                        <article class="recipe-card"
+                        <article class="recipe-card {{ $isSavedPage ? 'recipe-card--saved' : 'recipe-card--catalog' }}"
                             data-recipe-name="{{ $recipe['name'] }}"
                             data-recipe-ingredients="{{ implode(', ', $recipe['ingredients']) }}"
-                            data-recipe-category="{{ $recipe['category'] }}">
+                            data-recipe-category="{{ $recipe['category'] }}"
+                            @if ($isSavedPage) hidden @endif>
                             <div class="recipe-card-media">
                                 <img src="{{ asset('assets/' . $cover) }}" alt="" loading="lazy" width="400" height="300">
-                                <span class="recipe-video-badge"><span aria-hidden="true">▶</span> Video · PRO</span>
-                                <span class="recipe-card-duration">{{ $recipe['prep_cook_minutes'] }} min</span>
+                                @unless ($isSavedPage)
+                                    <span class="recipe-video-badge">
+                                        <span aria-hidden="true">▶</span> Video · PRO <span aria-hidden="true">♛</span>
+                                    </span>
+                                    <span class="recipe-card-duration">{{ $recipe['prep_cook_minutes'] }} mins</span>
+                                @endunless
                             </div>
 
                             <div class="recipe-card-body">
+                                @unless ($isSavedPage)
                                 <div class="recipe-card-tags">
                                     @if ($recipe['missing_ingredients'] === [])
                                         <p class="recipe-card-tag recipe-card-ready">
@@ -729,6 +919,7 @@
                                     @endif
                                 </div>
 
+                                @endunless
                                 <div class="recipe-card-footer">
                                     <div class="recipe-card-heading">
                                         <h3>
@@ -739,17 +930,23 @@
                                                 {{ $recipe['name'] }}
                                             </button>
                                         </h3>
-                                        <p>{{ $recipe['servings'] }} {{ $recipe['servings'] === 1 ? 'serving' : 'servings' }} · {{ $recipe['category'] }}</p>
+                                        <p>{{ $recipe['servings'] }} {{ $recipe['servings'] === 1 ? 'serving' : 'servings' }}@unless ($isSavedPage) · {{ $recipe['category'] }}@endunless</p>
                                     </div>
                                     <button type="button"
                                             class="recipe-favorite"
                                             data-favorite-name="{{ $recipe['name'] }}"
                                             aria-label="Favorit: {{ $recipe['name'] }}"
                                             aria-pressed="false">
-                                        <span class="recipe-favorite-empty" aria-hidden="true">♡</span>
-                                        <span class="recipe-favorite-filled" aria-hidden="true">♥</span>
+                                        <svg class="recipe-favorite-icon" viewBox="0 0 24 24"
+                                             fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"
+                                             aria-hidden="true">
+                                            <path d="M12 20.5c-.6-.4-8.5-5.3-9.3-10.2-.6-3.2 1.5-5.3 4.1-5.3 2.1 0 3.8 1.1 5.2 3 1.4-1.9 3.1-3 5.2-3 2.6 0 4.7 2.1 4.1 5.3-.8 4.9-8.7 9.8-9.3 10.2Z"/>
+                                        </svg>
                                     </button>
                                 </div>
+                                @if ($isSavedPage)
+                                    <span class="recipe-detail-category saved-card-category">{{ $recipe['category'] }}</span>
+                                @endif
                             </div>
                         </article>
                         <dialog id="recipe-detail-{{ $loop->iteration }}"
@@ -767,8 +964,11 @@
                                             data-favorite-name="{{ $recipe['name'] }}"
                                             aria-label="Favorit: {{ $recipe['name'] }}"
                                             aria-pressed="false">
-                                        <span class="recipe-favorite-empty" aria-hidden="true">♡</span>
-                                        <span class="recipe-favorite-filled" aria-hidden="true">♥</span>
+                                        <svg class="recipe-favorite-icon" viewBox="0 0 24 24"
+                                             fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"
+                                             aria-hidden="true">
+                                            <path d="M12 20.5c-.6-.4-8.5-5.3-9.3-10.2-.6-3.2 1.5-5.3 4.1-5.3 2.1 0 3.8 1.1 5.2 3 1.4-1.9 3.1-3 5.2-3 2.6 0 4.7 2.1 4.1 5.3-.8 4.9-8.7 9.8-9.3 10.2Z"/>
+                                        </svg>
                                     </button>
 
                                     <form method="dialog">
@@ -818,12 +1018,18 @@
                                 <details class="recipe-cooked"
                                          data-recipe-name="{{ $recipe['name'] }}"
                                          data-pantry-url="{{ route('pantry.index') }}">
-                                    <summary>Mark as Cooked &amp; Update Pantry</summary>
-                                    <p>Isi stok tersisa, misalnya 150 g. Masukkan 0 jika stok habis.</p>
+                                    <summary>
+                                        <span class="recipe-cooked-intro">
+                                            <strong>Finished cooking this dish?</strong>
+                                            <small>Update your Pantry stock and cooking history.</small>
+                                        </span>
+                                        <span class="recipe-cooked-action">Mark as Cooked &amp; Update Pantry</span>
+                                    </summary>
                                     <form class="recipe-cooked-form">
+                                        <p>Isi stok tersisa, misalnya 150 g. Masukkan 0 jika stok habis.</p>
                                         <div class="recipe-cooked-fields"></div>
                                         <p class="recipe-cooked-status" role="status" hidden></p>
-                                        <button type="submit" class="recipe-cooked-save">Save &amp; Back to Pantry</button>
+                                        <button type="submit" class="recipe-cooked-save" hidden>Save &amp; Back to Pantry</button>
                                     </form>
                                 </details>
                             @endif
@@ -1159,11 +1365,11 @@
         const selectionHelp = document.querySelector('#recipe-selection-help');
         const currentRecipeQuery = {{ \Illuminate\Support\Js::from($recipeQuery) }};
 
-        function recipeSelectionUrl(ingredients, useSoon) {
-            const nextUrl = new URL(window.location.href);
+        function recipeSelectionUrl(ingredients, useSoon, baseUrl = window.location.href) {
+            const nextUrl = new URL(baseUrl);
 
-            for (const key of [...url.searchParams.keys()]) {
-                if (/^(ingredients|use_soon)(?:\[.*\])?$/.test(key)) url.searchParams.delete(key);
+            for (const key of [...nextUrl.searchParams.keys()]) {
+                if (/^(ingredients|use_soon)(?:\[.*\])?$/.test(key)) nextUrl.searchParams.delete(key);
             }
 
             ingredients.forEach((name) => nextUrl.searchParams.append('ingredients[]', name));
@@ -1267,12 +1473,42 @@
             }
         }
 
+        function syncPagePantrySelection() {
+            if (availableIngredientsList) {
+                renderAvailableIngredients();
+                return;
+            }
+
+            try {
+                const selected = new Map();
+                const useSoon = new Set();
+
+                readPantryIngredients().forEach((item) => {
+                    if (!item?.checked || typeof item.name !== 'string' || isOutOfStock(item)) return;
+
+                    const name = normalizeIngredient(item.name);
+                    if (!name) return;
+
+                    selected.set(name, item.name.trim());
+                    if (item.status === 'Use Soon') useSoon.add(name);
+                });
+
+                const signature = (names) => JSON.stringify([...new Set(names.map(normalizeIngredient))].sort());
+                if (signature([...selected.values()]) !== signature(currentRecipeQuery.ingredients)
+                    || signature([...useSoon]) !== signature(currentRecipeQuery.use_soon)) {
+                    window.location.replace(recipeSelectionUrl([...selected.values()], [...useSoon]));
+                }
+            } catch (error) {
+                console.warn('Pilihan Pantry tidak bisa dimuat untuk Saved.', error);
+            }
+        }
+
         renderCookedHistory();
-        renderAvailableIngredients();
+        syncPagePantrySelection();
         window.addEventListener('pageshow', (event) => {
             if (event.persisted) {
                 renderCookedHistory();
-                renderAvailableIngredients();
+                syncPagePantrySelection();
             }
         });
 
@@ -1289,11 +1525,18 @@
         }
 
         let recipeFavorites = readRecipeFavorites();
+        let refreshCatalogFilters = () => {};
+        const recipeSavedBadge = document.querySelector('#mealup-saved-count');
+        const savedCategorySelect = document.querySelector('#saved-recipe-category');
 
         function renderRecipeFavorites() {
             favoriteButtons.forEach((button) => {
                 button.setAttribute('aria-pressed', String(recipeFavorites.has(button.dataset.favoriteName)));
             });
+
+            recipeSavedBadge.textContent = recipeFavorites.size;
+            recipeSavedBadge.hidden = recipeFavorites.size === 0;
+            refreshCatalogFilters();
         }
 
         favoriteButtons.forEach((button) => {
@@ -1313,6 +1556,11 @@
                 }
 
                 renderRecipeFavorites();
+
+                const card = button.closest('.recipe-card');
+                if (savedCategorySelect && card?.hidden) {
+                    document.querySelector('#recipe-search-input').focus();
+                }
             });
         });
 
@@ -1329,7 +1577,11 @@
         const recipeNavCount = document.querySelector('#mealup-recipe-count');
         const recipeNavLink = document.querySelector('#mealup-recipe-link');
 
-        recipeNavLink.href = recipeSelectionUrl(currentRecipeQuery.ingredients, currentRecipeQuery.use_soon);
+        recipeNavLink.href = recipeSelectionUrl(
+            currentRecipeQuery.ingredients,
+            currentRecipeQuery.use_soon,
+            savedCategorySelect ? recipeNavLink.href : window.location.href
+        );
 
         pantryNavCount.textContent = {{ $selectedIngredients->count() }};
         pantryNavCount.hidden = Number(pantryNavCount.textContent) === 0;
@@ -1344,6 +1596,15 @@
                 prepareCookedForm(dialog);
                 dialog.showModal();
             });
+
+            if (savedCategorySelect) {
+                const dialog = document.getElementById(button.dataset.recipeDialog);
+                dialog.addEventListener('close', () => {
+                    if (button.closest('.recipe-card').hidden) {
+                        document.querySelector('#recipe-search-input').focus();
+                    }
+                });
+            }
         });
         const recipeSearchInput = document.querySelector('#recipe-search-input');
 
@@ -1352,11 +1613,14 @@
             const recipeSearchEmpty = document.querySelector('#recipe-search-empty');
             const recipeFilterButtons = document.querySelectorAll('.recipe-filters button[data-category]');
 
+            const savedResults = document.querySelector('#saved-recipe-results');
             let activeCategory = 'All';
 
-            function filterRecipeCards() {
+            refreshCatalogFilters = () => {
                 const searchTerm = recipeSearchInput.value.trim().toLowerCase();
+                const category = savedCategorySelect?.value ?? activeCategory;
                 let visibleCount = 0;
+                let savedCount = 0;
 
                 recipeCards.forEach((card) => {
                     const name = card.dataset.recipeName.toLowerCase();
@@ -1364,9 +1628,11 @@
 
                     const matchesSearch = name.includes(searchTerm)
                         || ingredients.includes(searchTerm);
-                    const matchesCategory = activeCategory === 'All'
-                        || card.dataset.recipeCategory === activeCategory;
-                    const shouldShow = matchesSearch && matchesCategory;
+                    const matchesCategory = category === 'All'
+                        || card.dataset.recipeCategory === category;
+                    const isSaved = recipeFavorites.has(card.dataset.recipeName);
+                    if (isSaved) savedCount += 1;
+                    const shouldShow = (!savedCategorySelect || isSaved) && matchesSearch && matchesCategory;
 
                     card.hidden = !shouldShow;
 
@@ -1376,9 +1642,17 @@
                 });
 
                 recipeSearchEmpty.hidden = visibleCount > 0;
-            }
 
-            recipeSearchInput.addEventListener('input', filterRecipeCards);
+                if (savedResults) {
+                    savedResults.textContent = visibleCount + (visibleCount === 1 ? ' recipe' : ' recipes');
+                    recipeSearchEmpty.textContent = savedCount === 0
+                        ? 'Belum ada resep favorit. Klik ikon hati di halaman Recipe untuk menyimpan resep.'
+                        : 'Tidak ada resep favorit yang sesuai dengan pencarian atau kategori ini.';
+                }
+            };
+
+            recipeSearchInput.addEventListener('input', refreshCatalogFilters);
+            savedCategorySelect?.addEventListener('change', refreshCatalogFilters);
 
             recipeFilterButtons.forEach((button) => {
                 button.addEventListener('click', () => {
@@ -1388,11 +1662,11 @@
                         filterButton.setAttribute('aria-pressed', String(filterButton === button));
                     });
 
-                    filterRecipeCards();
+                    refreshCatalogFilters();
                 });
             });
 
-            filterRecipeCards();
+            refreshCatalogFilters();
         }
     </script>
 @endsection

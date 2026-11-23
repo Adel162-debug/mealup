@@ -17,4 +17,6 @@ Route::get('/home', function () {
 
 Route::view('/pantry', 'pantry')->name('pantry.index');
 
-Route::get('/recipes', [RecipeController::class, 'index'])->name('recipes.index');
+Route::view('/recipes', 'recipe')->name('recipes.index');
+
+Route::view('/saved', 'recipe')->name('saved.index');

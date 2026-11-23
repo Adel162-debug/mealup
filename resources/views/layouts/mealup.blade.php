@@ -258,7 +258,12 @@
                     <span id="mealup-recipe-count" class="mealup-nav-count" hidden></span>
                 </a>
 
-                <span class="mealup-nav-item" role="link" aria-disabled="true"><svg class="mealup-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h12v16l-6-4-6 4z"/></svg>Saved</span>
+                <a class="mealup-nav-item" href="{{ route('saved.index') }}"
+                   @if (request()->routeIs('saved.index')) aria-current="page" @endif>
+                    <svg class="mealup-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h12v16l-6-4-6 4z"/></svg>
+                    Saved
+                    <span id="mealup-saved-count" class="mealup-nav-count" hidden></span>
+                </a>
             </nav>
             <div class="mealup-sidebar-footer">
                 <span class="mealup-nav-item" role="link" aria-disabled="true"><svg class="mealup-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4H4v16h6m-2-8h13m-4-4 4 4-4 4"/></svg>Logout</span>
@@ -266,7 +271,7 @@
         </aside>
 
         <main class="mealup-main">
-            @if (request()->routeIs('pantry.index', 'recipes.index'))
+            @if (request()->routeIs('pantry.index', 'recipes.index', 'saved.index'))
                 <div class="mealup-page-bar">
                     <p class="mealup-ready-indicator">Strict 100% Ready-to-Cook Engine Active</p>
 
@@ -291,6 +296,29 @@
         </main>
     </div>
     <script>
+        const savedSidebarCount = document.querySelector('#mealup-saved-count');
+
+        function refreshSavedSidebarCount() {
+            let count = 0;
+
+            try {
+                const favorites = JSON.parse(sessionStorage.getItem('mealup.favorites.v1') ?? '[]');
+                count = Array.isArray(favorites)
+                    ? new Set(favorites.filter((name) => typeof name === 'string')).size
+                    : 0;
+            } catch {
+                // Favorites are unavailable in this tab.
+            }
+
+            savedSidebarCount.textContent = count;
+            savedSidebarCount.hidden = count === 0;
+        }
+
+        refreshSavedSidebarCount();
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) refreshSavedSidebarCount();
+        });
+
         const resetDemoButton = document.querySelector('#mealup-demo-reset');
 
         resetDemoButton?.addEventListener('click', () => {
@@ -298,7 +326,7 @@
             resetDemoError.hidden = true;
 
             const confirmed = window.confirm(
-                'Kembalikan Pantry ke data contoh? Bahan tambahan, hasil edit, dan pilihan di tab ini akan dihapus.'
+                'Kembalikan Pantry ke data contoh? Bahan tambahan, hasil edit, pilihan, favorit, dan riwayat memasak di tab ini akan dihapus.'
             );
 
             if (!confirmed) {
@@ -306,6 +334,7 @@
             }
 
             try {
+                sessionStorage.removeItem('mealup.favorites.v1');
                 sessionStorage.removeItem('mealup.cooked.v1');
                 sessionStorage.removeItem('mealup.pantry.v1');
             } catch (error) {
