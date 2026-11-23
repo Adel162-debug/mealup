@@ -479,13 +479,13 @@
     @php
     $ingredients = [
         ['name' => 'Chicken', 'category' => 'Meat', 'quantity' => '200 g',
-         'purchased' => '02/10/2026', 'expires' => '05/10/2026', 'status' => 'Good'],
+         'purchased' => today()->subDay()->format('d/m/Y'), 'expires' => today()->addDays(4)->format('d/m/Y'), 'status' => 'Good'],
 
         ['name' => 'Eggs', 'category' => 'Others', 'quantity' => '6 pcs',
-         'purchased' => '02/10/2026', 'expires' => '12/10/2026', 'status' => 'Fresh'],
+         'purchased' => today()->subDay()->format('d/m/Y'), 'expires' => today()->addDays(8)->format('d/m/Y'), 'status' => 'Fresh'],
 
         ['name' => 'Spinach', 'category' => 'Veggies', 'quantity' => '1 pack',
-         'purchased' => '02/10/2026', 'expires' => '03/10/2026', 'status' => 'Use Soon'],
+         'purchased' => today()->subDay()->format('d/m/Y'), 'expires' => today()->addDay()->format('d/m/Y'), 'status' => 'Use Soon'],
     ];
 @endphp
 
@@ -658,6 +658,7 @@
     const selectVisibleCheckbox = document.querySelector('#pantry-select-visible');
     const pantryStorageKey = 'mealup.pantry.v1';
     const selectionForm = document.querySelector('#pantry-recipe-form');
+    const recipeNavLink = document.querySelector('#mealup-recipe-link');
     const pantryNavCount = document.querySelector('#mealup-pantry-count');
     const recipeNavCount = document.querySelector('#mealup-recipe-count');
     const selectionCount = document.querySelector('#pantry-selection-count');
@@ -775,6 +776,11 @@
                 selectionFields.append(useSoonField);
             }
         });
+        const recipeUrl = new URL(selectionForm.action);
+        recipeUrl.search = new URLSearchParams(new FormData(selectionForm)).toString();
+        recipeNavLink.href = recipeUrl.href;
+
+        syncSelectVisibleCheckbox();
         savePantry();
     }
 
