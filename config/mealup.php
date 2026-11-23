@@ -49,9 +49,9 @@ return [
         'ingredients' => ['Tempe', 'Kecap Manis'],
         'staples' => ['Minyak goreng'],
         'steps' => [
-            'Iris tempe setebal satu sentimeter.',
+            'Iris tempe setebal sekitar satu sentimeter.',
             'Olesi kedua sisi dengan kecap manis dan sedikit minyak.',
-            'Panggang di wajan dengan api sedang hingga kedua sisi kecokelatan.',
+            'Panggang di wajan dengan api sedang, lalu balik hingga kedua sisi kecokelatan.',
         ],
     ],
     [
@@ -63,7 +63,7 @@ return [
         'staples' => ['Minyak goreng'],
         'steps' => [
             'Kupas pisang dan belah memanjang.',
-            'Masak kedua sisinya di wajan dengan sedikit minyak hingga keemasan.',
+            'Panaskan sedikit minyak di wajan, lalu masak pisang hingga kedua sisinya keemasan.',
             'Angkat dan beri madu sebelum disajikan.',
         ],
     ],
@@ -75,8 +75,8 @@ return [
         'ingredients' => ['Mie Instan', 'Sawi Putih'],
         'staples' => ['Air'],
         'steps' => [
-            'Cuci dan potong sawi putih.',
-            'Rebus mie sesuai petunjuk kemasan dan masukkan sawi pada menit terakhir.',
+            'Cuci sawi putih dan potong menjadi bagian kecil.',
+            'Rebus mie sesuai petunjuk kemasan. Masukkan sawi pada menit terakhir.',
             'Tambahkan bumbu dari kemasan dan sajikan.',
         ],
     ],

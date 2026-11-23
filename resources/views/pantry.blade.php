@@ -404,12 +404,10 @@
         @media (max-width: 767px) {
             .pantry-search { width: 100%; margin-inline-start: 0; }
         }
-        .pantry-table tr[data-out-of-stock="true"] .pantry-status,
-        .pantry-expiry-marker[data-urgent="true"] {
+        .pantry-table tr[data-out-of-stock="true"] .pantry-status {
             background: #f4e5e2;
             color: #832f26;
         }
-
         .pantry-expiry-marker {
             display: table;
             margin: 4px auto 0;
@@ -419,6 +417,12 @@
             color: #714500;
             font-size: .75rem;
             font-weight: 700;
+        }
+
+        .pantry-expiry-marker[data-state="expired"],
+        .pantry-expiry-marker[data-state="today"] {
+            background: #f4e5e2;
+            color: #832f26;
         }
     </style>
 @endpush
@@ -506,11 +510,16 @@
 
         <tbody>
             @foreach ($ingredients as $ingredient)
+                @php
+                    $outOfStock = trim((string) $ingredient['quantity']) === '0';
+                @endphp
                 <tr data-ingredient-name="{{ $ingredient['name'] }}"
+                    data-out-of-stock="{{ $outOfStock ? 'true' : 'false' }}"
                     data-category="{{ $ingredient['category'] }}"
                     data-status="{{ $ingredient['status'] }}">
                     <td>
                 <input type="checkbox"
+                    @disabled($outOfStock)
                     aria-label="Pilih {{ $ingredient['name'] }}">
                 </td>
 
@@ -523,7 +532,7 @@
                     <td>{{ $ingredient['purchased'] }}</td>
                     <td><span class="pantry-expiry-date">{{ $ingredient['expires'] ?: '—' }}</span></td>
                     <td>
-                        <span class="pantry-status">{{ $ingredient['status'] }}</span>
+                        <span class="pantry-status">{{ $outOfStock ? 'Out of Stock' : $ingredient['status'] }}</span>
                     </td>
                     <td>
                         <button type="button"
@@ -683,9 +692,9 @@
     }
 
     function getVisibleCheckboxes() {
-        return Array.from(pantryTable.querySelectorAll(
-            'tbody tr[data-ingredient-name]:not([hidden]) input[type="checkbox"]:enabled'
-        ));
+    return Array.from(pantryTable.querySelectorAll(
+        'tbody tr[data-ingredient-name]:not([hidden]) input[type="checkbox"]:enabled'
+    ));
     }
 
     function syncSelectVisibleCheckbox() {
@@ -915,11 +924,11 @@
     ].forEach((value) => {
         row.insertCell().textContent = value;
     });
+
     const expiryDate = document.createElement('span');
     expiryDate.className = 'pantry-expiry-date';
     expiryDate.textContent = formatDate(expires);
     row.insertCell().append(expiryDate);
-
     const statusBadge = document.createElement('span');
     statusBadge.className = 'pantry-status';
     statusBadge.textContent = outOfStock ? 'Out of Stock' : status;
@@ -945,10 +954,30 @@
         return toDateInputValue(row.querySelector('.pantry-expiry-date').textContent);
     }
 
-    function expiryDaysLeft(expiry, today) {
+    function getExpiryMarker(expiry, today = new Date()) {
         const expiryDay = Date.parse(expiry + 'T00:00:00Z');
+        if (!Number.isFinite(expiryDay)) {
+            return null;
+        }
+
+        // Compare calendar days without counting a daylight-saving shift as part of a day.
         const currentDay = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
-        return (expiryDay - currentDay) / 86400000;
+        const daysRemaining = (expiryDay - currentDay) / 86400000;
+
+        if (daysRemaining < 0) {
+            return { state: 'expired', label: 'Expired' };
+        }
+
+        if (daysRemaining === 0) {
+            return { state: 'today', label: 'Expires today' };
+        }
+
+        if (daysRemaining <= 3) {
+            const unit = daysRemaining === 1 ? 'day' : 'days';
+            return { state: 'soon', label: `${daysRemaining} ${unit} left` };
+        }
+
+        return null;
     }
 
     function updateExpiryMarkers() {
@@ -956,24 +985,22 @@
 
         pantryTable.querySelectorAll('.pantry-expiry-date').forEach((dateLabel) => {
             const cell = dateLabel.parentElement;
-            const remaining = expiryDaysLeft(toDateInputValue(dateLabel.textContent), today);
-            let marker = cell.querySelector('.pantry-expiry-marker');
+            const marker = getExpiryMarker(toDateInputValue(dateLabel.textContent), today);
+            let badge = cell.querySelector('.pantry-expiry-marker');
 
-            if (!Number.isFinite(remaining) || remaining > 3) {
-                marker?.remove();
+            if (!marker) {
+                badge?.remove();
                 return;
             }
 
-            if (!marker) {
-                marker = document.createElement('span');
-                marker.className = 'pantry-expiry-marker';
-                cell.append(marker);
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.className = 'pantry-expiry-marker';
+                cell.append(badge);
             }
 
-            marker.dataset.urgent = String(remaining <= 0);
-            marker.textContent = remaining < 0 ? 'Expired'
-                : remaining === 0 ? 'Expires today'
-                : remaining === 1 ? '1 day left' : remaining + ' days left';
+            badge.dataset.state = marker.state;
+            badge.textContent = marker.label;
         });
     }
 
