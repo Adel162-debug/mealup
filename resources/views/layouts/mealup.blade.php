@@ -145,8 +145,7 @@
             .mealup-sidebar-footer { display: none; }
             .mealup-main { padding: 24px 16px; }
         }
-        .mealup-page-bar,
-        .mealup-demo-actions {
+        .mealup-page-bar {
             display: flex;
             align-items: center;
             flex-wrap: wrap;
@@ -207,29 +206,6 @@
             .mealup-page-bar { margin-bottom: 18px; }
         }
 
-        .mealup-demo-reset {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            padding: 8px 14px;
-            border: 1px solid var(--meal-border);
-            border-radius: 999px;
-            background: #fff;
-            color: var(--meal-brown);
-            font: inherit;
-            font-size: .875rem;
-            font-weight: 650;
-            cursor: pointer;
-        }
-
-        .mealup-demo-reset:hover { border-color: var(--meal-gold); }
-        .mealup-demo-reset span { color: var(--meal-gold); }
-
-        .mealup-demo-error {
-            margin: 0;
-            color: #832f26;
-            font-size: .875rem;
-        }
     </style>
     @stack('styles')
 </head>
@@ -270,24 +246,14 @@
             </div>
         </aside>
 
-        <main class="mealup-main">
+        <main class="mealup-main" @if (request()->routeIs('pantry.index')) data-mealup-page="pantry" @endif>
             @if (request()->routeIs('pantry.index', 'recipes.index', 'saved.index'))
                 <div class="mealup-page-bar">
                     <p class="mealup-ready-indicator">Strict 100% Ready-to-Cook Engine Active</p>
 
-                    <div class="mealup-demo-actions">
-                        <p id="mealup-demo-error" class="mealup-demo-error" role="status" hidden></p>
-                        <button type="button"
-                                id="mealup-demo-reset"
-                                class="mealup-demo-reset"
-                                data-pantry-url="{{ route('pantry.index') }}"
-                                data-on-pantry="{{ request()->routeIs('pantry.index') ? 'true' : 'false' }}">
-                            <span aria-hidden="true">⟳</span> Reset Demo
-                        </button>
-                        <div class="mealup-plan">
-                            <span>Plan</span>
-                            <strong class="mealup-plan-name">Free Plan</strong>
-                        </div>
+                    <div class="mealup-plan">
+                        <span>Plan</span>
+                        <strong class="mealup-plan-name">Free Plan</strong>
                     </div>
                 </div>
             @endif
@@ -317,37 +283,6 @@
         refreshSavedSidebarCount();
         window.addEventListener('pageshow', (event) => {
             if (event.persisted) refreshSavedSidebarCount();
-        });
-
-        const resetDemoButton = document.querySelector('#mealup-demo-reset');
-
-        resetDemoButton?.addEventListener('click', () => {
-            const resetDemoError = document.querySelector('#mealup-demo-error');
-            resetDemoError.hidden = true;
-
-            const confirmed = window.confirm(
-                'Kembalikan Pantry ke data contoh? Bahan tambahan, hasil edit, pilihan, favorit, dan riwayat memasak di tab ini akan dihapus.'
-            );
-
-            if (!confirmed) {
-                return;
-            }
-
-            try {
-                sessionStorage.removeItem('mealup.favorites.v1');
-                sessionStorage.removeItem('mealup.cooked.v1');
-                sessionStorage.removeItem('mealup.pantry.v1');
-            } catch (error) {
-                resetDemoError.textContent = 'Data demo tidak bisa direset di tab ini.';
-                resetDemoError.hidden = false;
-                return;
-            }
-
-            if (resetDemoButton.dataset.onPantry === 'true') {
-                window.location.reload();
-            } else {
-                window.location.replace(resetDemoButton.dataset.pantryUrl);
-            }
         });
     </script>
 </body>
