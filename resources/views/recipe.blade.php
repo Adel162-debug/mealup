@@ -426,6 +426,58 @@
             font-size: .8rem;
             line-height: 1.4;
         }
+        .recipe-cooked {
+            margin-top: 16px;
+            padding: 16px;
+            border: 1px solid var(--meal-border);
+            border-radius: 14px;
+            background: #fff;
+        }
+
+        .recipe-cooked summary {
+            color: var(--meal-brown);
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .recipe-cooked p {
+            margin: 12px 0;
+            color: #6e6056;
+            font-size: .875rem;
+        }
+
+        .recipe-cooked-fields {
+            display: grid;
+            gap: 8px;
+        }
+
+        .recipe-cooked-fields label {
+            display: grid;
+            gap: 4px;
+            font-size: .875rem;
+            font-weight: 650;
+        }
+
+        .recipe-cooked-fields input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--meal-border);
+            border-radius: 9px;
+            color: inherit;
+            font: inherit;
+        }
+
+        .recipe-cooked-save {
+            margin-top: 12px;
+            padding: 9px 13px;
+            border: 0;
+            border-radius: 10px;
+            background: var(--meal-brown);
+            color: #fff;
+            font: inherit;
+            font-weight: 650;
+            cursor: pointer;
+        }
     </style>
 @endpush
 
@@ -692,6 +744,18 @@
                                     </dd>
                                 </div>
                             </dl>
+
+                            @if ($missingCount === 0)
+                                <details class="recipe-cooked" data-pantry-url="{{ route('pantry.index') }}">
+                                    <summary>Mark as Cooked &amp; Update Pantry</summary>
+                                    <p>Isi stok tersisa, misalnya 150 g. Masukkan 0 jika stok habis.</p>
+                                    <form class="recipe-cooked-form">
+                                        <div class="recipe-cooked-fields"></div>
+                                        <p class="recipe-cooked-status" role="status" hidden></p>
+                                        <button type="submit" class="recipe-cooked-save">Save &amp; Back to Pantry</button>
+                                    </form>
+                                </details>
+                            @endif
                             </div>
                             <div>
                             <section class="recipe-detail-panel">
@@ -746,6 +810,7 @@
         const pantryStorageKey = 'mealup.pantry.v1';
 
         const normalizeIngredient = (value) => value.trim().toLowerCase();
+        const isOutOfStock = (ingredient) => ingredient?.quantity?.trim?.() === '0';
 
         function readPantryIngredients() {
             const saved = sessionStorage.getItem(pantryStorageKey);
@@ -775,7 +840,8 @@
                 const name = normalizeIngredient(ingredient.name);
                 const quantity = ingredient.quantity.trim();
                 const status = typeof ingredient.status === 'string' ? ingredient.status.trim() : '';
-                const description = status ? `${quantity} (${status})` : quantity;
+                const stockStatus = isOutOfStock(ingredient) ? 'Out of Stock' : status;
+                const description = stockStatus ? `${quantity} (${stockStatus})` : quantity;
                 const stock = stockByName.get(name) ?? [];
 
                 stock.push(description);
@@ -790,6 +856,121 @@
                     ? `Stok: ${stock.join(' · ')}`
                     : 'Stok belum tercatat di tab ini.';
             });
+        }
+
+        function prepareCookedForm(dialog) {
+            const details = dialog.querySelector('.recipe-cooked');
+
+            if (!details) {
+                return;
+            }
+
+            const form = details.querySelector('.recipe-cooked-form');
+            const fields = form.querySelector('.recipe-cooked-fields');
+            const status = form.querySelector('.recipe-cooked-status');
+            const submitButton = form.querySelector('.recipe-cooked-save');
+            const requiredNames = new Set(Array.from(
+                dialog.querySelectorAll('[data-pantry-ingredient]'),
+                (item) => normalizeIngredient(item.dataset.pantryIngredient)
+            ));
+
+            function showStatus(message) {
+                status.textContent = message;
+                status.hidden = false;
+            }
+
+            details.open = false;
+            fields.replaceChildren();
+            status.hidden = true;
+            submitButton.hidden = true;
+            form.onsubmit = (event) => event.preventDefault();
+
+            let pantryIngredients;
+            try {
+                pantryIngredients = readPantryIngredients();
+            } catch {
+                showStatus('Stok Pantry tidak bisa dibaca di tab ini.');
+                return;
+            }
+
+            const entries = pantryIngredients.flatMap((ingredient, index) => {
+                if (ingredient?.checked !== true
+                    || isOutOfStock(ingredient)
+                    || typeof ingredient.name !== 'string'
+                    || !requiredNames.has(normalizeIngredient(ingredient.name))) {
+                    return [];
+                }
+
+                return [{ ingredient, index }];
+            });
+            const namesFound = new Set(entries.map(({ ingredient }) => normalizeIngredient(ingredient.name)));
+
+            if (!entries.length || namesFound.size !== requiredNames.size) {
+                showStatus('Pilih semua bahan utama di Pantry pada tab ini sebelum memperbarui stok.');
+                return;
+            }
+
+            const inputs = entries.map(({ ingredient }) => {
+                const label = document.createElement('label');
+                label.textContent = ingredient.name;
+
+                if (ingredient.expires) {
+                    const [year, month, day] = ingredient.expires.split('-');
+                    label.textContent += ` · kedaluwarsa ${day}/${month}/${year}`;
+                }
+
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.required = true;
+                input.value = ingredient.quantity;
+                input.addEventListener('input', () => input.setCustomValidity(''));
+                label.append(input);
+                fields.append(label);
+
+                return input;
+            });
+
+            submitButton.hidden = false;
+            const originalStock = JSON.stringify(pantryIngredients);
+
+            form.onsubmit = (event) => {
+                event.preventDefault();
+                status.hidden = true;
+
+                const quantities = inputs.map((input) => input.value.trim());
+                const blankIndex = quantities.indexOf('');
+
+                if (blankIndex !== -1) {
+                    inputs[blankIndex].setCustomValidity('Isi stok tersisa, atau masukkan 0 jika habis.');
+                    inputs[blankIndex].reportValidity();
+                    return;
+                }
+
+                try {
+                    const currentStock = readPantryIngredients();
+
+                    if (JSON.stringify(currentStock) !== originalStock) {
+                        showStatus('Stok Pantry berubah. Tutup dan buka kembali detail resep untuk memuat data terbaru.');
+                        return;
+                    }
+
+                    entries.forEach(({ index }, entryIndex) => {
+                        const quantity = quantities[entryIndex];
+                        currentStock[index].quantity = quantity;
+
+                        if (quantity === '0') {
+                            currentStock[index].checked = false;
+                        }
+                    });
+
+                    sessionStorage.setItem(pantryStorageKey, JSON.stringify(currentStock));
+                } catch {
+                    showStatus('Perubahan stok tidak bisa disimpan di tab ini.');
+                    return;
+                }
+
+                window.location.assign(details.dataset.pantryUrl);
+            };
         }
 
         function removePantrySelection(name) {
@@ -826,8 +1007,7 @@
         const selectionHelp = document.querySelector('#recipe-selection-help');
         const currentRecipeQuery = {{ \Illuminate\Support\Js::from($recipeQuery) }};
 
-        function addRecipeIngredient(ingredient) {
-            const name = normalizeIngredient(ingredient.name);
+        function recipeSelectionUrl(ingredients, useSoon) {
             const nextUrl = new URL(window.location.href);
 
             for (const key of [...nextUrl.searchParams.keys()]) {
@@ -836,33 +1016,42 @@
                 }
             }
 
-            currentRecipeQuery.ingredients.forEach((selected) => {
-                nextUrl.searchParams.append('ingredients[]', selected);
-            });
-            nextUrl.searchParams.append('ingredients[]', ingredient.name.trim());
+            ingredients.forEach((name) => nextUrl.searchParams.append('ingredients[]', name));
+            useSoon.forEach((name) => nextUrl.searchParams.append('use_soon[]', name));
 
-            currentRecipeQuery.use_soon.forEach((useSoon) => {
-                nextUrl.searchParams.append('use_soon[]', useSoon);
-            });
-            if (ingredient.status === 'Use Soon') {
-                nextUrl.searchParams.append('use_soon[]', name);
-            }
+            return nextUrl.href;
+        }
+
+        function addRecipeIngredient(ingredient) {
+            const name = normalizeIngredient(ingredient.name);
+            let matching;
 
             try {
                 const pantryIngredients = readPantryIngredients();
-                const matching = pantryIngredients.find((item) => (
-                    typeof item?.name === 'string' && normalizeIngredient(item.name) === name
+                matching = pantryIngredients.find((item) => (
+                    typeof item?.name === 'string'
+                    && normalizeIngredient(item.name) === name
+                    && !isOutOfStock(item)
                 ));
 
-                if (matching) {
-                    matching.checked = true;
-                    sessionStorage.setItem(pantryStorageKey, JSON.stringify(pantryIngredients));
+                if (!matching) {
+                    renderAvailableIngredients();
+                    return;
                 }
+
+                matching.checked = true;
+                sessionStorage.setItem(pantryStorageKey, JSON.stringify(pantryIngredients));
             } catch (error) {
                 console.warn('Pilihan Pantry tidak bisa diperbarui di tab ini.', error);
+                return;
             }
 
-            window.location.assign(nextUrl.href);
+            const ingredients = [...currentRecipeQuery.ingredients, matching.name.trim()];
+            const useSoon = matching.status === 'Use Soon'
+                ? [...currentRecipeQuery.use_soon, name]
+                : currentRecipeQuery.use_soon;
+
+            window.location.assign(recipeSelectionUrl(ingredients, useSoon));
         }
 
         function renderAvailableIngredients() {
@@ -876,6 +1065,25 @@
                 pantryIngredients = [];
             }
 
+            const emptyNames = new Set();
+            const availableNames = new Set();
+
+            pantryIngredients.forEach((ingredient) => {
+                if (typeof ingredient?.name === 'string') {
+                    const name = normalizeIngredient(ingredient.name);
+                    (isOutOfStock(ingredient) ? emptyNames : availableNames).add(name);
+                }
+            });
+
+            const isAvailable = (name) => !emptyNames.has(name) || availableNames.has(name);
+            const ingredients = currentRecipeQuery.ingredients.filter((name) => isAvailable(normalizeIngredient(name)));
+
+            if (ingredients.length !== currentRecipeQuery.ingredients.length) {
+                const useSoon = currentRecipeQuery.use_soon.filter(isAvailable);
+                window.location.replace(recipeSelectionUrl(ingredients, useSoon));
+                return;
+            }
+
             availableIngredientsList.replaceChildren();
 
             pantryIngredients.forEach((ingredient) => {
@@ -883,7 +1091,7 @@
                     ? normalizeIngredient(ingredient.name)
                     : '';
 
-                if (!name || shownNames.has(name)) {
+                if (!name || shownNames.has(name) || isOutOfStock(ingredient)) {
                     return;
                 }
 
@@ -929,6 +1137,7 @@
                 const dialog = document.getElementById(button.dataset.recipeDialog);
 
                 showRecipeIngredientStock(dialog);
+                prepareCookedForm(dialog);
                 dialog.showModal();
             });
         });

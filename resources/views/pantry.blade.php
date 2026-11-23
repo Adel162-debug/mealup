@@ -404,6 +404,10 @@
         @media (max-width: 767px) {
             .pantry-search { width: 100%; margin-inline-start: 0; }
         }
+        .pantry-table tr[data-out-of-stock="true"] .pantry-status {
+            background: #f4e5e2;
+            color: #832f26;
+        }
     </style>
 @endpush
 
@@ -490,11 +494,16 @@
 
         <tbody>
             @foreach ($ingredients as $ingredient)
+                @php
+                    $outOfStock = trim((string) $ingredient['quantity']) === '0';
+                @endphp
                 <tr data-ingredient-name="{{ $ingredient['name'] }}"
+                    data-out-of-stock="{{ $outOfStock ? 'true' : 'false' }}"
                     data-category="{{ $ingredient['category'] }}"
                     data-status="{{ $ingredient['status'] }}">
                     <td>
                 <input type="checkbox"
+                    @disabled($outOfStock)
                     aria-label="Pilih {{ $ingredient['name'] }}">
                 </td>
 
@@ -507,7 +516,7 @@
                     <td>{{ $ingredient['purchased'] }}</td>
                     <td>{{ $ingredient['expires'] }}</td>
                     <td>
-                        <span class="pantry-status">{{ $ingredient['status'] }}</span>
+                        <span class="pantry-status">{{ $outOfStock ? 'Out of Stock' : $ingredient['status'] }}</span>
                     </td>
                     <td>
                         <button type="button"
@@ -654,20 +663,20 @@
     }
 
     selectAllButton.addEventListener('click', () => {
-        checkMatchingIngredients('tbody tr[data-ingredient-name] input[type="checkbox"]');
+        checkMatchingIngredients('tbody tr[data-ingredient-name] input[type="checkbox"]:enabled');
     });
 
     selectUseSoonButton.addEventListener('click', () => {
-        checkMatchingIngredients('tbody tr[data-status="Use Soon"] input[type="checkbox"]');
+        checkMatchingIngredients('tbody tr[data-status="Use Soon"] input[type="checkbox"]:enabled');
     });
 
     function getCheckedIngredients() {
-        return pantryTable.querySelectorAll('tbody input[type="checkbox"]:checked');
+        return pantryTable.querySelectorAll('tbody input[type="checkbox"]:enabled:checked');
     }
 
     function getVisibleCheckboxes() {
     return Array.from(pantryTable.querySelectorAll(
-        'tbody tr[data-ingredient-name]:not([hidden]) input[type="checkbox"]'
+        'tbody tr[data-ingredient-name]:not([hidden]) input[type="checkbox"]:enabled'
     ));
     }
 
@@ -804,6 +813,7 @@
         });
 
         emptyState.hidden = hasResults;
+        syncSelectVisibleCheckbox();
     }
 
     searchInput.addEventListener('input', filterIngredients);
@@ -855,7 +865,10 @@
 
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
-    checkbox.checked = checked;
+    const outOfStock = quantity.trim() === '0';
+    row.dataset.outOfStock = String(outOfStock);
+    checkbox.disabled = outOfStock;
+    checkbox.checked = !outOfStock && checked;
     checkbox.setAttribute('aria-label', `Pilih ${name}`);
     row.insertCell().append(checkbox);
 
@@ -892,7 +905,7 @@
     });
     const statusBadge = document.createElement('span');
     statusBadge.className = 'pantry-status';
-    statusBadge.textContent = status;
+    statusBadge.textContent = outOfStock ? 'Out of Stock' : status;
     row.insertCell().append(statusBadge);
 
     const editButton = document.createElement('button');
