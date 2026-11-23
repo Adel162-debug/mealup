@@ -448,9 +448,40 @@
         }
 
         .recipe-cooked summary {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            align-items: center;
+            gap: 12px;
             color: var(--meal-brown);
-            font-weight: 700;
             cursor: pointer;
+            list-style: none;
+        }
+
+        .recipe-cooked summary::-webkit-details-marker { display: none; }
+
+        .recipe-cooked-intro {
+            display: grid;
+            gap: 4px;
+        }
+
+        .recipe-cooked-intro small {
+            color: #6e6056;
+            font-size: .875rem;
+        }
+
+        .recipe-cooked-action {
+            padding: 11px 14px;
+            border-radius: 12px;
+            background: var(--meal-brown);
+            color: #fff;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .recipe-cooked summary:hover .recipe-cooked-action { background: #51311e; }
+
+        @media (max-width: 520px) {
+            .recipe-cooked summary { grid-template-columns: minmax(0, 1fr); }
         }
 
         .recipe-cooked p {
@@ -987,12 +1018,18 @@
                                 <details class="recipe-cooked"
                                          data-recipe-name="{{ $recipe['name'] }}"
                                          data-pantry-url="{{ route('pantry.index') }}">
-                                    <summary>Mark as Cooked &amp; Update Pantry</summary>
-                                    <p>Isi stok tersisa, misalnya 150 g. Masukkan 0 jika stok habis.</p>
+                                    <summary>
+                                        <span class="recipe-cooked-intro">
+                                            <strong>Finished cooking this dish?</strong>
+                                            <small>Update your Pantry stock and cooking history.</small>
+                                        </span>
+                                        <span class="recipe-cooked-action">Mark as Cooked &amp; Update Pantry</span>
+                                    </summary>
                                     <form class="recipe-cooked-form">
+                                        <p>Isi stok tersisa, misalnya 150 g. Masukkan 0 jika stok habis.</p>
                                         <div class="recipe-cooked-fields"></div>
                                         <p class="recipe-cooked-status" role="status" hidden></p>
-                                        <button type="submit" class="recipe-cooked-save">Save &amp; Back to Pantry</button>
+                                        <button type="submit" class="recipe-cooked-save" hidden>Save &amp; Back to Pantry</button>
                                     </form>
                                 </details>
                             @endif
