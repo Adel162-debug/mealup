@@ -260,6 +260,150 @@
             background: #fff0cd;
             color: #714500;
         }
+        .pantry-quick-fill {
+            margin-bottom: 16px;
+        }
+
+        .pantry-quick-fill p {
+            margin: 0 0 8px;
+            color: #6e6056;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .pantry-quick-fill-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .pantry-quick-fill-options button {
+            padding: 5px 10px;
+            border-color: #d8c9b7;
+            background: #fbf7ee;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+        .pantry-selection-list li {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+          }
+
+        .pantry-remove-selection {
+            display: grid;
+            width: 24px;
+            height: 24px;
+            padding: 0;
+            place-items: center;
+            border: 0;
+            border-radius: 50%;
+            background: transparent;
+            color: inherit;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        .pantry-remove-selection:hover,
+        .pantry-remove-selection:focus-visible {
+            background: #eadcc9;
+        }
+        .pantry-in-basket,
+        .pantry-status {
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.8125rem;
+            font-weight: 700;
+        }
+
+        .pantry-in-basket {
+            display: none;
+            margin-inline-start: 6px;
+            background: #3b2010;
+            color: #fff;
+        }
+
+        .pantry-table tbody tr:has(input[type="checkbox"]:checked) .pantry-in-basket {
+            display: inline-block;
+        }
+
+        .pantry-status {
+            display: inline-block;
+            background: #f2ece3;
+            color: #3b2010;
+        }
+
+        .pantry-table tr[data-status="Fresh"] .pantry-status {
+            background: #d7f0e2;
+            color: #185638;
+        }
+
+        .pantry-table tr[data-status="Good"] .pantry-status {
+            background: #dceef9;
+            color: #174d70;
+        }
+
+        .pantry-table tr[data-status="Use Soon"] .pantry-status {
+            background: #fff0cd;
+            color: #714500;
+        }
+        .pantry-ready-note {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-top: 20px;
+        padding: 12px 16px;
+        border: 1px solid #eadcc9;
+        border-radius: 16px;
+        background: #fff;
+       }
+
+        .pantry-ready-note p {
+            margin: 0;
+            font-size: 0.9375rem;
+            line-height: 1.5;
+        }
+
+        .pantry-ready-icon {
+            display: grid;
+            flex: 0 0 28px;
+            height: 28px;
+            place-items: center;
+            border-radius: 9px;
+            background: #d7f0e2;
+            color: #185638;
+            font-weight: 700;
+        }
+        .pantry-ready-count {
+            display: inline-block;
+            margin-inline-start: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: #d7f0e2;
+            color: #185638;
+            font-size: 0.875rem;
+            font-weight: 700;
+        }
+        .pantry-heading { align-items: flex-start; }
+        .pantry-heading p { margin-top: 8px; font-size: 1.075rem; }
+        .pantry-toolbar { justify-content: flex-start; gap: 12px; margin-top: 32px; }
+        .pantry-search { margin-inline-start: auto; }
+        .pantry-add, .pantry-filter, .pantry-edit { cursor: pointer; }
+        .pantry-heading .pantry-add, .pantry-selection-actions .pantry-add { min-height: 50px; }
+        .pantry-table-wrapper { box-shadow: 0 10px 32px rgb(59 32 16 / 7%); }
+        .pantry-table th, .pantry-table td { padding: 19px 16px; }
+        .pantry-table thead th:not(:nth-child(2)), .pantry-table td { text-align: center; }
+        .pantry-edit { padding: 6px; border: 0; background: transparent; color: inherit; font: inherit; font-weight: 650; text-decoration: underline; }
+        .pantry-category { display: inline-block; padding: 4px 11px; border-radius: 999px; background: #fbebd0; color: #714500; font-size: .82rem; font-weight: 650; }
+        tr[data-category="Meat"] .pantry-category { background: #fadad6; color: #832f26; }
+        tr[data-category="Veggies"] .pantry-category { background: #d7f0e2; color: #185638; }
+        .pantry-selection { max-width: 1020px; margin-inline: auto; }
+        .pantry-dialog { padding: clamp(20px, 3vw, 34px); }
+        .pantry-dialog-header button[formnovalidate] { font-size: 1.4rem; line-height: 1; }
+
+        @media (max-width: 767px) {
+            .pantry-search { width: 100%; margin-inline-start: 0; }
+        }
     </style>
 @endpush
 
@@ -302,6 +446,16 @@
                aria-label="Cari bahan"
                placeholder="Search ingredients">
     </div>
+    <div class="pantry-ready-note">
+        <span class="pantry-ready-icon" aria-hidden="true">✓</span>
+
+        <p>
+            <strong>Zero Missing Ingredients:</strong>
+            Only recipes whose main ingredients are all checked appear in
+            <strong>100% Ready to Cook</strong>.
+            Basic staples like salt and oil are assumed available.
+        </p>
+    </div>
     @php
     $ingredients = [
         ['name' => 'Chicken', 'category' => 'Meat', 'quantity' => '200 g',
@@ -319,7 +473,11 @@
     <table class="pantry-table" aria-label="Daftar bahan Pantry">
         <thead>
             <tr>
-                <th scope="col">Select</th>
+                <th scope="col">
+                    <input type="checkbox"
+                        id="pantry-select-visible"
+                        aria-label="Pilih semua bahan yang terlihat">
+                </th>
                 <th scope="col">Ingredient</th>
                 <th scope="col">Category</th>
                 <th scope="col">Qty</th>
@@ -332,7 +490,7 @@
 
         <tbody>
             @foreach ($ingredients as $ingredient)
-                <<tr data-ingredient-name="{{ $ingredient['name'] }}"
+                <tr data-ingredient-name="{{ $ingredient['name'] }}"
                     data-category="{{ $ingredient['category'] }}"
                     data-status="{{ $ingredient['status'] }}">
                     <td>
@@ -340,16 +498,21 @@
                     aria-label="Pilih {{ $ingredient['name'] }}">
                 </td>
 
-                    <th scope="row">{{ $ingredient['name'] }}</th>
-                    <td>{{ $ingredient['category'] }}</td>
+                    <th scope="row">
+                        {{ $ingredient['name'] }}
+                        <span class="pantry-in-basket" aria-hidden="true">In Basket</span>
+                    </th>
+                    <td><span class="pantry-category">{{ $ingredient['category'] }}</span></td>
                     <td>{{ $ingredient['quantity'] }}</td>
                     <td>{{ $ingredient['purchased'] }}</td>
                     <td>{{ $ingredient['expires'] }}</td>
-                    <td>{{ $ingredient['status'] }}</td>
+                    <td>
+                        <span class="pantry-status">{{ $ingredient['status'] }}</span>
+                    </td>
                     <td>
                         <button type="button"
-                                aria-label="Edit {{ $ingredient['name'] }}"
-                                disabled>Edit</button>
+                            class="pantry-edit"
+                            aria-label="Edit {{ $ingredient['name'] }}">Edit</button>
                     </td>
                 </tr>
             @endforeach
@@ -367,6 +530,7 @@
       hidden>
     <div aria-live="polite">
         <strong id="pantry-selection-count"></strong>
+        <span id="pantry-ready-count" class="pantry-ready-count"></span>
         <ul id="pantry-selection-list" class="pantry-selection-list"></ul>
     </div>
 
@@ -385,6 +549,22 @@
         <div class="pantry-dialog-header">
             <h2 id="pantry-dialog-title">Add Kost Ingredient</h2>
              <button type="submit" formnovalidate aria-label="Tutup popup">×</button>
+        </div>
+        <div id="pantry-quick-fill" class="pantry-quick-fill">
+            <p id="pantry-quick-fill-label">Quick-fill common ingredients</p>
+
+            <div class="pantry-quick-fill-options"
+                role="group"
+                aria-labelledby="pantry-quick-fill-label">
+                @foreach (['Sawi Putih' => 'Veggies', 'Tempe' => 'Others', 'Mie Instan' => 'Others'] as $name => $category)
+                    <button type="button"
+                            class="pantry-filter"
+                            data-name="{{ $name }}"
+                            data-category="{{ $category }}">
+                        + {{ $name }}
+                    </button>
+                @endforeach
+            </div>
         </div>
 
         <div class="pantry-form-fields">
@@ -439,13 +619,25 @@
     </form>
 </dialog>
 
+@php
+    $recipeRequirements = collect(config('mealup.recipes', []))
+        ->pluck('ingredients')
+        ->all();
+@endphp
+
 <script>
     const searchInput = document.querySelector('.pantry-search');
     const filterButtons = document.querySelectorAll('.pantry-filters .pantry-filter');
     const emptyState = document.querySelector('#pantry-empty-state');
     const pantryTable = document.querySelector('.pantry-table');
+    const selectVisibleCheckbox = document.querySelector('#pantry-select-visible');
+    const pantryStorageKey = 'mealup.pantry.v1';
     const selectionForm = document.querySelector('#pantry-recipe-form');
+    const pantryNavCount = document.querySelector('#mealup-pantry-count');
+    const recipeNavCount = document.querySelector('#mealup-recipe-count');
     const selectionCount = document.querySelector('#pantry-selection-count');
+    const readyRecipeCount = document.querySelector('#pantry-ready-count');
+    const recipeRequirements = {{ \Illuminate\Support\Js::from($recipeRequirements) }};
     const selectionList = document.querySelector('#pantry-selection-list');
     const selectionFields = document.querySelector('#pantry-selection-fields');
     const clearSelectionButton = document.querySelector('#pantry-clear-selection');
@@ -473,9 +665,45 @@
         return pantryTable.querySelectorAll('tbody input[type="checkbox"]:checked');
     }
 
+    function getVisibleCheckboxes() {
+    return Array.from(pantryTable.querySelectorAll(
+        'tbody tr[data-ingredient-name]:not([hidden]) input[type="checkbox"]'
+    ));
+    }
+
+    function syncSelectVisibleCheckbox() {
+        const visibleCheckboxes = getVisibleCheckboxes();
+        const visibleCount = visibleCheckboxes.length;
+        const checkedCount = visibleCheckboxes.filter((checkbox) => checkbox.checked).length;
+
+        selectVisibleCheckbox.disabled = visibleCount === 0;
+        selectVisibleCheckbox.checked = visibleCount > 0 && checkedCount === visibleCount;
+        selectVisibleCheckbox.indeterminate = checkedCount > 0 && checkedCount < visibleCount;
+    }
+
     function updateSelection() {
         const checkedIngredients = getCheckedIngredients();
         const count = checkedIngredients.length;
+        const normalizeIngredient = (name) => name.trim().toLowerCase();
+
+        const selectedNames = new Set(Array.from(checkedIngredients, (checkbox) => {
+            return normalizeIngredient(checkbox.closest('tr').dataset.ingredientName);
+        }));
+
+        const readyCount = recipeRequirements.filter((requiredIngredients) => {
+            return requiredIngredients.every((ingredient) => {
+                return selectedNames.has(normalizeIngredient(ingredient));
+            });
+        }).length;
+
+        pantryNavCount.textContent = count;
+        pantryNavCount.hidden = count === 0;
+        recipeNavCount.textContent = readyCount;
+        recipeNavCount.hidden = count === 0;
+
+        readyRecipeCount.textContent = readyCount === 1
+            ? '1 recipe ready to cook'
+            : `${readyCount} recipes ready to cook`;
 
         selectionForm.hidden = count === 0;
         selectionCount.textContent = count === 1
@@ -486,10 +714,28 @@
         selectionFields.replaceChildren();
 
         checkedIngredients.forEach((checkbox) => {
-            const name = checkbox.closest('tr').dataset.ingredientName;
+            const { ingredientName: name, status } = checkbox.closest('tr').dataset;
 
             const listItem = document.createElement('li');
-            listItem.textContent = name;
+
+            const ingredientLabel = document.createElement('span');
+            ingredientLabel.textContent = name;
+
+            const removeButton = document.createElement('button');
+            removeButton.type = 'button';
+            removeButton.className = 'pantry-remove-selection';
+            removeButton.textContent = '×';
+            removeButton.setAttribute('aria-label', `Batalkan pilihan ${name}`);
+
+            removeButton.addEventListener('click', () => {
+                checkbox.checked = false;
+                updateSelection();
+
+                const nextButton = selectionList.querySelector('.pantry-remove-selection');
+                (nextButton ?? searchInput).focus();
+            });
+
+            listItem.append(ingredientLabel, removeButton);
             selectionList.append(listItem);
 
             const field = document.createElement('input');
@@ -497,13 +743,26 @@
             field.name = 'ingredients[]';
             field.value = name;
             selectionFields.append(field);
+
+            if (status === 'Use Soon') {
+                const useSoonField = field.cloneNode();
+                useSoonField.name = 'use_soon[]';
+                selectionFields.append(useSoonField);
+            }
         });
+        savePantry();
     }
 
     pantryTable.addEventListener('change', (event) => {
-        if (event.target.matches('input[type="checkbox"]')) {
-            updateSelection();
-        }
+    if (event.target === selectVisibleCheckbox) {
+        getVisibleCheckboxes().forEach((checkbox) => {
+            checkbox.checked = selectVisibleCheckbox.checked;
+        });
+    } else if (!event.target.matches('tbody input[type="checkbox"]')) {
+        return;
+    }
+
+        updateSelection();
     });
 
     clearSelectionButton.addEventListener('click', () => {
@@ -520,7 +779,6 @@
         (firstVisibleCheckbox ?? searchInput).focus();
     });
 
-    updateSelection();
 
     let activeCategory = 'All';
 
@@ -567,14 +825,127 @@
     const addIngredientButton = document.querySelector('#pantry-open-dialog');
     const addIngredientDialog = document.querySelector('#pantry-add-dialog');
 
-    addIngredientButton.addEventListener('click', () => {
-        addIngredientDialog.showModal();
-    });
-
     const addIngredientForm = document.querySelector('#pantry-add-form');
     const nameInput = addIngredientForm.elements.namedItem('name');
     const quantityInput = addIngredientForm.elements.namedItem('quantity');
     const expiryInput = addIngredientForm.elements.namedItem('expires');
+
+    const dialogTitle = document.querySelector('#pantry-dialog-title');
+    const saveIngredientButton = addIngredientForm.querySelector('.pantry-add');
+    const categoryInput = addIngredientForm.elements.namedItem('category');
+    const purchaseInput = addIngredientForm.elements.namedItem('purchased');
+    const statusInput = addIngredientForm.elements.namedItem('status');
+    const quickFill = document.querySelector('#pantry-quick-fill');
+
+    quickFill.querySelectorAll('button[data-name]').forEach((button) => {
+        button.addEventListener('click', () => {
+            nameInput.value = button.dataset.name;
+            categoryInput.value = button.dataset.category;
+            nameInput.setCustomValidity('');
+            quantityInput.focus();
+        });
+    });
+
+    let editingRow = null;
+    function createIngredientRow({ name, category, quantity, purchased, expires, status, checked }) {
+    const row = document.createElement('tr');
+    row.dataset.ingredientName = name;
+    row.dataset.category = category;
+    row.dataset.status = status;
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = checked;
+    checkbox.setAttribute('aria-label', `Pilih ${name}`);
+    row.insertCell().append(checkbox);
+
+    const nameCell = document.createElement('th');
+    nameCell.scope = 'row';
+    nameCell.textContent = name;
+    const basketBadge = document.createElement('span');
+    basketBadge.className = 'pantry-in-basket';
+    basketBadge.textContent = 'In Basket';
+    basketBadge.setAttribute('aria-hidden', 'true');
+    nameCell.append(basketBadge);
+    row.append(nameCell);
+
+    const categoryBadge = document.createElement('span');
+    categoryBadge.className = 'pantry-category';
+    categoryBadge.textContent = category;
+    row.insertCell().append(categoryBadge);
+
+    function formatDate(date) {
+        if (!date) {
+            return '—';
+        }
+
+        const [year, month, day] = date.split('-');
+        return `${day}/${month}/${year}`;
+    }
+
+    [
+        quantity,
+        formatDate(purchased),
+        formatDate(expires),
+    ].forEach((value) => {
+        row.insertCell().textContent = value;
+    });
+    const statusBadge = document.createElement('span');
+    statusBadge.className = 'pantry-status';
+    statusBadge.textContent = status;
+    row.insertCell().append(statusBadge);
+
+    const editButton = document.createElement('button');
+    editButton.type = 'button';
+    editButton.className = 'pantry-edit';
+    editButton.textContent = 'Edit';
+    editButton.setAttribute('aria-label', `Edit ${name}`);
+    row.insertCell().append(editButton);
+
+    return row;
+}
+
+    function toDateInputValue(displayDate) {
+        const [day, month, year] = displayDate.trim().split('/');
+
+        return year ? `${year}-${month}-${day}` : '';
+    }
+
+    function openIngredientDialog(row = null) {
+        editingRow = row;
+        quickFill.hidden = row !== null;
+        addIngredientForm.reset();
+
+        nameInput.setCustomValidity('');
+        quantityInput.setCustomValidity('');
+        expiryInput.setCustomValidity('');
+
+        dialogTitle.textContent = row ? 'Edit Ingredient' : 'Add Kost Ingredient';
+        saveIngredientButton.textContent = row ? 'Save Changes' : 'Save & Check';
+
+        if (row) {
+            nameInput.value = row.dataset.ingredientName;
+            categoryInput.value = row.dataset.category;
+            quantityInput.value = row.cells[3].textContent.trim();
+            purchaseInput.value = toDateInputValue(row.cells[4].textContent);
+            expiryInput.value = toDateInputValue(row.cells[5].textContent);
+            statusInput.value = row.dataset.status;
+        }
+
+        addIngredientDialog.showModal();
+    }
+
+    addIngredientButton.addEventListener('click', () => {
+        openIngredientDialog();
+    });
+
+    pantryTable.addEventListener('click', (event) => {
+        const editButton = event.target.closest('.pantry-edit');
+
+        if (editButton) {
+            openIngredientDialog(editButton.closest('tr'));
+        }
+    });
 
     addIngredientForm.addEventListener('input', (event) => {
         event.target.setCustomValidity('');
@@ -614,47 +985,96 @@
             return;
         }
 
-        const row = document.createElement('tr');
-        row.dataset.ingredientName = name;
-        row.dataset.category = category;
-        row.dataset.status = status;
+        const checked = editingRow
+            ? editingRow.querySelector('input[type="checkbox"]').checked
+            : true;
 
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.checked = true;
-        checkbox.setAttribute('aria-label', `Pilih ${name}`);
-        row.insertCell().append(checkbox);
-
-        const nameCell = document.createElement('th');
-        nameCell.scope = 'row';
-        nameCell.textContent = name;
-        row.append(nameCell);
-
-        const [purchaseYear, purchaseMonth, purchaseDay] = purchased.split('-');
-        const [expiryYear, expiryMonth, expiryDay] = expires.split('-');
-
-        [
+        const row = createIngredientRow({
+            name,
             category,
             quantity,
-            `${purchaseDay}/${purchaseMonth}/${purchaseYear}`,
-            expires ? `${expiryDay}/${expiryMonth}/${expiryYear}` : '—',
+            purchased,
+            expires,
             status,
-        ].forEach((value) => {
-            row.insertCell().textContent = value;
+            checked,
         });
 
-        const editButton = document.createElement('button');
-        editButton.type = 'button';
-        editButton.textContent = 'Edit';
-        editButton.disabled = true;
-        editButton.setAttribute('aria-label', `Edit ${name}`);
-        row.insertCell().append(editButton);
+        const isEditing = editingRow !== null;
 
-        emptyState.before(row);
+        if (isEditing) {
+            editingRow.replaceWith(row);
+        } else {
+            emptyState.before(row);
+        }
+
         filterIngredients();
         updateSelection();
         addIngredientForm.reset();
         addIngredientDialog.close();
+        editingRow = null;
+
+        if (isEditing) {
+            (row.hidden ? searchInput : row.querySelector('.pantry-edit')).focus();
+        }
+    });
+    function savePantry() {
+        const rows = pantryTable.querySelectorAll('tbody tr[data-ingredient-name]');
+
+        const ingredients = Array.from(rows, (row) => ({
+            name: row.dataset.ingredientName,
+            category: row.dataset.category,
+            quantity: row.cells[3].textContent.trim(),
+            purchased: toDateInputValue(row.cells[4].textContent),
+            expires: toDateInputValue(row.cells[5].textContent),
+            status: row.dataset.status,
+            checked: row.querySelector('input[type="checkbox"]').checked,
+        }));
+
+        try {
+            sessionStorage.setItem(pantryStorageKey, JSON.stringify(ingredients));
+        } catch (error) {
+            console.warn('Isi Pantry tidak bisa disimpan di tab ini.', error);
+        }
+    }
+
+    function restorePantry() {
+        try {
+            const saved = sessionStorage.getItem(pantryStorageKey);
+
+            if (saved === null) {
+                return;
+            }
+
+            const ingredients = JSON.parse(saved);
+
+            if (!Array.isArray(ingredients)) {
+                return;
+            }
+
+            const restoredRows = ingredients.map(createIngredientRow);
+
+            pantryTable.querySelectorAll('tbody tr[data-ingredient-name]').forEach((row) => {
+                row.remove();
+            });
+
+            emptyState.before(...restoredRows);
+        } catch (error) {
+            console.warn('Isi Pantry sebelumnya tidak bisa dipulihkan.', error);
+        }
+    }
+
+    function refreshPantryFromStorage() {
+        restorePantry();
+        filterIngredients();
+        updateSelection();
+    }
+
+    refreshPantryFromStorage();
+
+    window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+            refreshPantryFromStorage();
+        }
     });
 </script>
 @endsection

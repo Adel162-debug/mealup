@@ -209,6 +209,210 @@
             color: #714500;
             font-size: 0.875rem;
         }
+    .recipe-detail-ingredients {
+    padding: 0;
+    list-style: none;
+    }
+
+    .recipe-detail-ingredients li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 10px 12px;
+        border: 1px solid #eadcc9;
+        border-radius: 12px;
+    }
+
+    .recipe-ingredient-status {
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: #d7f0e2;
+        color: #185638;
+        font-size: 0.8125rem;
+        font-weight: 600;
+    }
+
+    .recipe-ingredient-status[data-state="missing"] {
+        background: #fff0cd;
+        color: #714500;
+    }
+
+    .recipe-staples-note {
+        margin-top: -8px;
+        color: #6e6056;
+        font-size: 0.875rem;
+    }
+        .recipe-page-header { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; }
+        .recipe-page-header p { margin: 8px 0 0; color: #74685f; font-size: 1.075rem; }
+        .recipe-modes { margin: 0; padding: 5px; border: 1px solid var(--meal-border); border-radius: 25px; background: #fff; }
+        .recipe-modes .recipe-filter { border-color: transparent; font-weight: 650; }
+        .recipe-checked { margin-bottom: 24px; padding: 22px 24px; border: 1px solid var(--meal-border); border-radius: 20px; background: #fff; }
+        .recipe-checked-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+        .recipe-checked-header h2 { margin: 0; font-size: 1.15rem; }
+        .recipe-checked-header a { padding: 8px 12px; border: 1px solid #e9cda0; border-radius: 12px; background: #fbf3e3; color: #714500; font-weight: 650; text-decoration: none; }
+        .recipe-checked .recipe-card-ingredients li { background: var(--meal-brown); color: #fff; }
+        .recipe-search, .recipe-grid { max-width: none; }
+        .recipe-search label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+        .recipe-search input { min-height: 48px; }
+        .recipe-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: clamp(16px, 2vw, 28px); }
+        .recipe-card { position: relative; overflow: hidden; padding: 0; box-shadow: 0 6px 24px rgb(59 32 16 / 8%); }
+        .recipe-card:hover, .recipe-card:focus-within { border-color: #b77e35; }
+        .recipe-card-body { padding: 18px; }
+        .recipe-card h3 { margin-bottom: 12px; }
+        .recipe-card .recipe-detail-trigger { text-decoration: none; font-weight: 700; }
+        .recipe-detail-trigger::after { position: absolute; inset: 0; content: ''; }
+        .recipe-card-media { position: relative; aspect-ratio: 1.65; background: #eadcc9; }
+        .recipe-card-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+        .recipe-card-media .recipe-video-badge { position: absolute; top: 12px; left: 12px; background: var(--meal-brown); color: #fff0cd; }
+        .recipe-detail { width: min(1050px, calc(100% - 32px)); max-height: calc(100dvh - 44px); padding: clamp(16px, 3vw, 30px); background: var(--meal-cream); }
+        .recipe-detail-header { align-items: center; padding-bottom: 18px; border-bottom: 1px solid var(--meal-border); }
+        .recipe-detail-header form { margin: 0; }
+        .recipe-detail-header button { width: 40px; height: 40px; padding: 0; border-radius: 50%; background: #fff; font-size: 1.4rem; }
+        .recipe-detail-category { display: inline-block; margin-bottom: 7px; padding: 3px 10px; border: 1px solid var(--meal-border); border-radius: 999px; background: #fff; font-size: .8rem; }
+        .recipe-detail-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: start; gap: 18px; margin-top: 20px; }
+        .recipe-detail-grid .recipe-video { margin: 0; }
+        .recipe-video-preview { min-height: 230px; align-content: center; background-image: linear-gradient(rgb(59 32 16 / 78%), rgb(59 32 16 / 84%)), var(--recipe-cover); background-size: cover; background-position: center; }
+        .recipe-detail-panel { padding: 16px 18px; border: 1px solid var(--meal-border); border-radius: 16px; background: #fff; }
+        .recipe-detail-panel + .recipe-detail-panel { margin-top: 16px; }
+        .recipe-detail-panel h3:first-child { margin-top: 0; }
+        .recipe-detail-panel ol { margin-bottom: 0; padding-left: 20px; line-height: 1.5; }
+        .recipe-detail .recipe-card-ingredients li { margin-top: 0; }
+        @media (max-width: 850px) { .recipe-detail-grid { grid-template-columns: minmax(0, 1fr); } }
+        .recipe-results-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 0 0 16px;
+        }
+
+        .recipe-results-heading h2 { margin: 0; }
+
+        .recipe-priority {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border: 1px solid var(--meal-border);
+            border-radius: 999px;
+            background: #fff;
+            color: inherit;
+            font-weight: 650;
+            text-decoration: none;
+        }
+
+        .recipe-priority span {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #91847a;
+        }
+
+        .recipe-priority[data-enabled="true"] {
+            border-color: #e4af55;
+            background: #fff0cd;
+            color: #714500;
+        }
+
+        .recipe-priority[data-enabled="true"] span { background: #c77a0a; }
+
+        .recipe-use-soon-label {
+            margin: 12px 0 0;
+            color: #714500;
+            font-size: .85rem;
+            font-weight: 650;
+        }
+        .recipe-checked .recipe-card-ingredients li {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px 4px 12px;
+        }
+
+        .recipe-remove-ingredient {
+            display: inline-grid;
+            width: 26px;
+            height: 26px;
+            place-items: center;
+            border-radius: 50%;
+            color: inherit;
+            font-size: 1.1rem;
+            line-height: 1;
+            text-decoration: none;
+        }
+
+        .recipe-remove-ingredient:hover,
+        .recipe-remove-ingredient:focus-visible {
+            background: rgb(255 255 255 / 18%);
+        }
+        .recipe-card-duration {
+            position: absolute;
+            right: 12px;
+            bottom: 12px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: #fbf7ee;
+            color: var(--meal-brown);
+            font-size: .8rem;
+            font-weight: 700;
+        }
+
+        .recipe-detail-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 115px), 1fr));
+            gap: 10px;
+            margin: 16px 0 0;
+        }
+
+        .recipe-detail-stats > div {
+            display: grid;
+            align-content: center;
+            gap: 5px;
+            padding: 12px 8px;
+            border: 1px solid var(--meal-border);
+            border-radius: 14px;
+            background: #fff;
+            text-align: center;
+        }
+
+        .recipe-detail-stats dt {
+            color: #74685f;
+            font-size: .85rem;
+        }
+
+        .recipe-detail-stats dd {
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .recipe-detail-stats dd[data-ready="true"] { color: #185638; }
+        .recipe-detail-stats dd[data-ready="false"] { color: #714500; }
+        .recipe-available-ingredients:not([hidden]) {
+            margin-top: 10px;
+        }
+
+        .recipe-checked .recipe-available-ingredients li {
+            padding: 0;
+            background: transparent;
+            color: var(--meal-brown);
+        }
+
+        .recipe-add-ingredient {
+            padding: 6px 12px;
+            border: 1px solid #e9cda0;
+            border-radius: 999px;
+            background: #fbf3e3;
+            color: inherit;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        .recipe-add-ingredient:hover {
+            background: #f4e7cd;
+        }
     </style>
 @endpush
 
@@ -222,45 +426,28 @@
         ->values();
 
     $selectedNames = $selectedIngredients->map($normalize);
+    $useSoonNames = collect((array) request()->query('use_soon', []))
+        ->filter(fn ($name) => is_string($name) && trim($name) !== '')
+        ->map($normalize)
+        ->filter(fn ($name) => $selectedNames->containsStrict($name))
+        ->unique()
+        ->values();
 
-$recipes = collect([
-    [
-        'name' => 'Sup Ayam Telur Bayam',
-        'category' => 'Main Course',
-        'ingredients' => ['Chicken', 'Eggs', 'Spinach'],
-        'steps' => [
-            'Potong ayam kecil-kecil, lalu rebus dengan air, bawang putih, dan garam hingga matang.',
-            'Kocok telur, lalu tuangkan perlahan sambil mengaduk kuah.',
-            'Masukkan bayam dan masak sebentar hingga layu.',
-        ],
-    ],
-    [
-        'name' => 'Omelet Bayam',
-        'category' => 'Main Course',
-        'ingredients' => ['Eggs', 'Spinach'],
-        'steps' => [
-            'Kocok telur dengan sedikit garam dan masukkan bayam yang sudah diiris.',
-            'Tuang campuran ke wajan dengan sedikit minyak.',
-            'Masak hingga telur mengeras, lalu lipat dan sajikan.',
-        ],
-    ],
-    [
-        'name' => 'Ayam Panggang',
-        'category' => 'Main Course',
-        'ingredients' => ['Chicken'],
-        'steps' => [
-            'Bumbui potongan ayam dengan garam dan sedikit minyak.',
-            'Panggang hingga permukaan kecokelatan dan bagian tengah matang.',
-            'Diamkan sebentar sebelum disajikan.',
-        ],
-    ],
-]);
+    $prioritizeUseSoon = request()->query('priority') !== 'off';
 
-        $recipes = $recipes->map(function (array $recipe) use ($selectedNames, $normalize) {
+        $recipes = collect(config('mealup.recipes', []));
+
+        $recipes = $recipes->map(function (array $recipe) use ($selectedNames, $useSoonNames, $normalize) {
             $recipe['missing_ingredients'] = collect($recipe['ingredients'])
                 ->reject(fn ($ingredient) => $selectedNames->containsStrict($normalize($ingredient)))
                 ->values()
                 ->all();
+
+            $recipe['use_soon_count'] = collect($recipe['ingredients'])
+                ->map($normalize)
+                ->unique()
+                ->filter(fn ($name) => $useSoonNames->containsStrict($name))
+                ->count();
 
             return $recipe;
         });
@@ -269,34 +456,34 @@ $recipes = collect([
 
         $showCatalog = request()->query('mode') === 'catalog';
         $visibleRecipes = $showCatalog ? $recipes : $readyRecipes;
-        $recipeQuery = ['ingredients' => $selectedIngredients->all()];
+        if ($prioritizeUseSoon) {
+            $visibleRecipes = $visibleRecipes->sortByDesc('use_soon_count');
+        }
+
+        $recipeQuery = [
+            'ingredients' => $selectedIngredients->all(),
+            'use_soon' => $useSoonNames->all(),
+        ];
+
+        if (!$prioritizeUseSoon) {
+            $recipeQuery['priority'] = 'off';
+        }
+
+        $priorityQuery = array_merge($recipeQuery, [
+            'priority' => $prioritizeUseSoon ? 'off' : 'on',
+        ]);
+
+        if ($showCatalog) {
+            $priorityQuery['mode'] = 'catalog';
+        }
 @endphp
 
 @section('content')
-    <h1>Recipes</h1>
-
-    <section aria-labelledby="selected-ingredients-heading">
-        <h2 id="selected-ingredients-heading">Your Checked Ingredients</h2>
-
-        @if ($selectedIngredients->isEmpty())
-            <p>Pilih bahan di Pantry untuk melihat rekomendasi resep.</p>
-        @else
-            <ul>
-                @foreach ($selectedIngredients as $ingredient)
-                    <li>{{ $ingredient }}</li>
-                @endforeach
-            </ul>
-        @endif
-
-        <a href="{{ route('pantry.index') }}">Back to Pantry</a>
-    </section>
-
-    @if ($selectedIngredients->isNotEmpty())
-        <section aria-labelledby="ready-recipes-heading">
-            <h2 id="ready-recipes-heading">
-                {{ $showCatalog ? 'Explore All Catalog' : '100% Ready to Cook' }}
-            </h2>
-
+    <header class="recipe-page-header">
+        <div>
+            <h1>Recipes</h1>
+            <p>Find recipes you can cook using your checked Pantry ingredients.</p>
+        </div>
             <nav class="recipe-modes" aria-label="Daftar resep">
                 <a class="recipe-filter"
                 href="{{ route('recipes.index', $recipeQuery) }}"
@@ -310,8 +497,70 @@ $recipes = collect([
                     Explore All Catalog ({{ $recipes->count() }})
                 </a>
             </nav>
+    </header>
+
+    <section class="recipe-checked" aria-labelledby="selected-ingredients-heading">
+        <div class="recipe-checked-header">
+            <h2 id="selected-ingredients-heading">Your Checked Ingredients</h2>
+            <a href="{{ route('pantry.index') }}">Edit Pantry Selection</a>
+        </div>
+
+        @if ($selectedIngredients->isEmpty())
+            <p id="recipe-selection-help">Pilih bahan di Pantry untuk melihat rekomendasi resep.</p>
+        @else
+            <ul class="recipe-card-ingredients">
+                @foreach ($selectedIngredients as $ingredient)
+                    @php
+                        $removedName = $normalize($ingredient);
+                        $remainingQuery = array_merge($recipeQuery, [
+                            'ingredients' => $selectedIngredients
+                                ->reject(fn ($name) => $normalize($name) === $removedName)
+                                ->values()
+                                ->all(),
+                            'use_soon' => $useSoonNames
+                                ->reject(fn ($name) => $name === $removedName)
+                                ->values()
+                                ->all(),
+                        ]);
+
+                        if ($showCatalog) {
+                            $remainingQuery['mode'] = 'catalog';
+                        }
+                    @endphp
+                    <li>
+                        {{ $ingredient }}
+                        <a class="recipe-remove-ingredient"
+                           href="{{ route('recipes.index', $remainingQuery) }}"
+                           data-ingredient-name="{{ $ingredient }}"
+                           aria-label="Batalkan pilihan {{ $ingredient }}">×</a>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
+
+        <ul id="recipe-available-ingredients"
+            class="recipe-card-ingredients recipe-available-ingredients"
+            aria-label="Bahan Pantry yang bisa ditambahkan" hidden></ul>
+    </section>
+
+        <section aria-labelledby="ready-recipes-heading">
+            <div class="recipe-results-heading">
+                <h2 id="ready-recipes-heading">
+                    {{ $showCatalog ? 'Explore All Catalog' : '100% Ready to Cook' }}
+                </h2>
+                <a class="recipe-priority"
+                   href="{{ route('recipes.index', $priorityQuery) }}"
+                   data-enabled="{{ $prioritizeUseSoon ? 'true' : 'false' }}">
+                    <span aria-hidden="true"></span>
+                    Use Soon Priority: {{ $prioritizeUseSoon ? 'ON' : 'OFF' }}
+                </a>
+            </div>
+
+
             @if ($visibleRecipes->isEmpty())
-                <p>Belum ada resep yang cocok dengan bahan pilihanmu.</p>
+                <p>{{ $selectedIngredients->isEmpty()
+                    ? 'Pilih bahan di Pantry atau buka katalog untuk menjelajahi resep.'
+                    : 'Belum ada resep yang cocok dengan bahan pilihanmu.' }}</p>
             @else
                 <div class="recipe-search">
                     <label for="recipe-search-input">Search recipes or ingredients</label>
@@ -334,10 +583,24 @@ $recipes = collect([
                 </div>
                 <div class="recipe-grid">
                     @foreach ($visibleRecipes as $recipe)
+                        @php
+                            $cover = match ($recipe['name']) {
+                                'Sup Ayam Telur Bayam' => '9c08e.png',
+                                'Omelet Bayam' => '59b25.png',
+                                'Ayam Panggang' => '13049.png',
+                                default => '2aef4.png',
+                            };
+                        @endphp
                         <article class="recipe-card"
                             data-recipe-name="{{ $recipe['name'] }}"
                             data-recipe-ingredients="{{ implode(', ', $recipe['ingredients']) }}"
                             data-recipe-category="{{ $recipe['category'] }}">
+                            <div class="recipe-card-media">
+                                <img src="{{ asset('assets/' . $cover) }}" alt="" loading="lazy" width="400" height="240">
+                                <span class="recipe-video-badge">▶ Video · PRO</span>
+                                <span class="recipe-card-duration">{{ $recipe['prep_cook_minutes'] }} min</span>
+                            </div>
+                            <div class="recipe-card-body">
                             <h3>
                                 <button type="button"
                                         class="recipe-detail-trigger"
@@ -353,23 +616,34 @@ $recipes = collect([
                                     <li>{{ $ingredient }}</li>
                                 @endforeach
                             </ul>
+                            @if ($recipe['use_soon_count'] > 0)
+                                <p class="recipe-use-soon-label">
+                                    Uses {{ $recipe['use_soon_count'] }} Use Soon {{ $recipe['use_soon_count'] === 1 ? 'ingredient' : 'ingredients' }}
+                                </p>
+                            @endif
                             @if ($recipe['missing_ingredients'] !== [])
                                 <p class="recipe-card-missing">
                                     <strong>Belum dipilih:</strong>
                                     {{ implode(', ', $recipe['missing_ingredients']) }}
                                 </p>
                             @endif
+                            </div>
                         </article>
                         <dialog id="recipe-detail-{{ $loop->iteration }}"
                                 class="recipe-detail"
                                 aria-labelledby="recipe-title-{{ $loop->iteration }}">
                             <div class="recipe-detail-header">
-                                <h2 id="recipe-title-{{ $loop->iteration }}">{{ $recipe['name'] }}</h2>
+                                <div>
+                                    <span class="recipe-detail-category">{{ $recipe['category'] }}</span>
+                                    <h2 id="recipe-title-{{ $loop->iteration }}">{{ $recipe['name'] }}</h2>
+                                </div>
 
                                 <form method="dialog">
-                                    <button type="submit" autofocus>Tutup</button>
+                                    <button type="submit" aria-label="Tutup detail resep" autofocus>×</button>
                                 </form>
                             </div>
+                            <div class="recipe-detail-grid">
+                            <div>
                             <section class="recipe-video"
                                     aria-labelledby="recipe-video-title-{{ $loop->iteration }}">
                                 <div class="recipe-video-header">
@@ -377,32 +651,225 @@ $recipes = collect([
                                     <span class="recipe-video-badge">Premium</span>
                                 </div>
 
-                                <div class="recipe-video-preview">
+                                <div class="recipe-video-preview" style="--recipe-cover: url('{{ asset('assets/' . $cover) }}')">
                                     <span class="recipe-video-icon" aria-hidden="true">🔒</span>
                                     <p><strong>Video memasak terkunci</strong></p>
                                     <p>Video langkah demi langkah tersedia untuk pengguna Premium.</p>
                                 </div>
                             </section>
-                            <h3>Bahan utama</h3>
-                            <ul>
-                                @foreach ($recipe['ingredients'] as $ingredient)
-                                    <li>{{ $ingredient }}</li>
-                                @endforeach
-                            </ul>
 
+                            @php
+                                $missingCount = count($recipe['missing_ingredients']);
+                            @endphp
+                            <dl class="recipe-detail-stats">
+                                <div>
+                                    <dt>Prep &amp; Cook</dt>
+                                    <dd>{{ $recipe['prep_cook_minutes'] }} min</dd>
+                                </div>
+                                <div>
+                                    <dt>Servings</dt>
+                                    <dd>{{ $recipe['servings'] }} {{ $recipe['servings'] === 1 ? 'serving' : 'servings' }}</dd>
+                                </div>
+                                <div>
+                                    <dt>Readiness</dt>
+                                    <dd data-ready="{{ $missingCount === 0 ? 'true' : 'false' }}">
+                                        {{ $missingCount === 0
+                                            ? '100% Ready ✓'
+                                            : $missingCount . ($missingCount === 1 ? ' ingredient missing' : ' ingredients missing') }}
+                                    </dd>
+                                </div>
+                            </dl>
+                            </div>
+                            <div>
+                            <section class="recipe-detail-panel">
+                                <h3>Bahan utama</h3>
+
+                                <ul class="recipe-detail-ingredients">
+                                    @foreach ($recipe['ingredients'] as $ingredient)
+                                        @php
+                                            $isMissing = in_array($ingredient, $recipe['missing_ingredients'], true);
+                                        @endphp
+
+                                        <li>
+                                            <strong>{{ $ingredient }}</strong>
+
+                                            <span class="recipe-ingredient-status"
+                                                data-state="{{ $isMissing ? 'missing' : 'checked' }}">
+                                                {{ $isMissing ? 'Belum dipilih' : 'Sudah dicentang' }}
+                                            </span>
+                                        </li>
+                                    @endforeach
+                                </ul>
+
+                                <h3>Bahan dapur dasar</h3>
+                                <p class="recipe-staples-note">Diasumsikan tersedia.</p>
+
+                                <ul class="recipe-card-ingredients">
+                                    @foreach ($recipe['staples'] as $staple)
+                                        <li>{{ $staple }}</li>
+                                    @endforeach
+                                </ul>
+
+                            </section>
+                            <section class="recipe-detail-panel">
                             <h3>Langkah memasak</h3>
                             <ol>
                                 @foreach ($recipe['steps'] as $step)
                                     <li>{{ $step }}</li>
                                 @endforeach
                             </ol>
+                            </section>
+                            </div>
+                            </div>
                         </dialog>
                     @endforeach
                 </div>
             @endif
         </section>
-    @endif
     <script>
+        const pantryStorageKey = 'mealup.pantry.v1';
+
+        const normalizeIngredient = (value) => value.trim().toLowerCase();
+
+        function readPantryIngredients() {
+            const saved = sessionStorage.getItem(pantryStorageKey);
+            const ingredients = saved === null ? [] : JSON.parse(saved);
+
+            return Array.isArray(ingredients) ? ingredients : [];
+        }
+
+        function removePantrySelection(name) {
+            const removedName = normalizeIngredient(name);
+
+            try {
+                const ingredients = readPantryIngredients();
+
+                ingredients.forEach((ingredient) => {
+                    if (typeof ingredient?.name === 'string'
+                        && normalizeIngredient(ingredient.name) === removedName) {
+                        ingredient.checked = false;
+                    }
+                });
+
+                sessionStorage.setItem(pantryStorageKey, JSON.stringify(ingredients));
+            } catch (error) {
+                console.warn('Pilihan Pantry tidak bisa diperbarui di tab ini.', error);
+            }
+        }
+
+        document.querySelectorAll('.recipe-remove-ingredient').forEach((link) => {
+            link.addEventListener('click', (event) => {
+                if (event.defaultPrevented || event.button !== 0
+                    || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) {
+                    return;
+                }
+
+                removePantrySelection(link.dataset.ingredientName);
+            });
+        });
+
+        const availableIngredientsList = document.querySelector('#recipe-available-ingredients');
+        const selectionHelp = document.querySelector('#recipe-selection-help');
+        const currentRecipeQuery = {{ \Illuminate\Support\Js::from($recipeQuery) }};
+
+        function addRecipeIngredient(ingredient) {
+            const name = normalizeIngredient(ingredient.name);
+            const nextUrl = new URL(window.location.href);
+
+            for (const key of [...nextUrl.searchParams.keys()]) {
+                if (/^(ingredients|use_soon)(?:\[.*\])?$/.test(key)) {
+                    nextUrl.searchParams.delete(key);
+                }
+            }
+
+            currentRecipeQuery.ingredients.forEach((selected) => {
+                nextUrl.searchParams.append('ingredients[]', selected);
+            });
+            nextUrl.searchParams.append('ingredients[]', ingredient.name.trim());
+
+            currentRecipeQuery.use_soon.forEach((useSoon) => {
+                nextUrl.searchParams.append('use_soon[]', useSoon);
+            });
+            if (ingredient.status === 'Use Soon') {
+                nextUrl.searchParams.append('use_soon[]', name);
+            }
+
+            try {
+                const pantryIngredients = readPantryIngredients();
+                const matching = pantryIngredients.find((item) => (
+                    typeof item?.name === 'string' && normalizeIngredient(item.name) === name
+                ));
+
+                if (matching) {
+                    matching.checked = true;
+                    sessionStorage.setItem(pantryStorageKey, JSON.stringify(pantryIngredients));
+                }
+            } catch (error) {
+                console.warn('Pilihan Pantry tidak bisa diperbarui di tab ini.', error);
+            }
+
+            window.location.assign(nextUrl.href);
+        }
+
+        function renderAvailableIngredients() {
+            const shownNames = new Set(currentRecipeQuery.ingredients.map(normalizeIngredient));
+            let pantryIngredients;
+
+            try {
+                pantryIngredients = readPantryIngredients();
+            } catch (error) {
+                console.warn('Isi Pantry tidak bisa dibaca di tab ini.', error);
+                pantryIngredients = [];
+            }
+
+            availableIngredientsList.replaceChildren();
+
+            pantryIngredients.forEach((ingredient) => {
+                const name = typeof ingredient?.name === 'string'
+                    ? normalizeIngredient(ingredient.name)
+                    : '';
+
+                if (!name || shownNames.has(name)) {
+                    return;
+                }
+
+                shownNames.add(name);
+                const item = document.createElement('li');
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'recipe-add-ingredient';
+                button.textContent = `+ ${ingredient.name}`;
+                button.setAttribute('aria-label', `Pilih ${ingredient.name}`);
+                button.addEventListener('click', () => addRecipeIngredient(ingredient));
+                item.append(button);
+                availableIngredientsList.append(item);
+            });
+
+            const hasOptions = availableIngredientsList.childElementCount > 0;
+            availableIngredientsList.hidden = !hasOptions;
+
+            if (selectionHelp) {
+                selectionHelp.textContent = hasOptions
+                    ? 'Pilih bahan di bawah untuk melihat rekomendasi resep.'
+                    : 'Pilih bahan di Pantry untuk melihat rekomendasi resep.';
+            }
+        }
+
+        renderAvailableIngredients();
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) {
+                renderAvailableIngredients();
+            }
+        });
+
+        const pantryNavCount = document.querySelector('#mealup-pantry-count');
+        const recipeNavCount = document.querySelector('#mealup-recipe-count');
+
+        pantryNavCount.textContent = {{ $selectedIngredients->count() }};
+        pantryNavCount.hidden = Number(pantryNavCount.textContent) === 0;
+        recipeNavCount.textContent = {{ $readyRecipes->count() }};
+        recipeNavCount.hidden = pantryNavCount.hidden;
+
         document.querySelectorAll('.recipe-detail-trigger').forEach((button) => {
             button.addEventListener('click', () => {
                 const dialog = document.getElementById(button.dataset.recipeDialog);
@@ -415,7 +882,7 @@ $recipes = collect([
         if (recipeSearchInput) {
             const recipeCards = document.querySelectorAll('.recipe-grid .recipe-card');
             const recipeSearchEmpty = document.querySelector('#recipe-search-empty');
-            const recipeFilterButtons = document.querySelectorAll('.recipe-filter');
+            const recipeFilterButtons = document.querySelectorAll('.recipe-filters button[data-category]');
 
             let activeCategory = 'All';
 

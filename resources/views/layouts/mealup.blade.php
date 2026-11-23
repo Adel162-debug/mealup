@@ -102,10 +102,37 @@
                 padding: 24px 16px;
             }
         }
-    </style>
-</head>
+        :root {
+            --meal-cream: #f9f5ec;
+            --meal-brown: #3b2010;
+            --meal-gold: #a76a10;
+            --meal-border: #eadcc9;
+        }
 
-@stack('styles')
+        body { background: var(--meal-cream); }
+        .mealup-layout { grid-template-columns: clamp(232px, 15.5vw, 294px) minmax(0, 1fr); }
+        .mealup-sidebar { display: flex; flex-direction: column; padding: 42px 21px 26px; }
+        .mealup-logo { margin-bottom: 48px; }
+        .mealup-nav { gap: 10px; }
+        .mealup-nav-item { display: flex; align-items: center; min-height: 54px; gap: 14px; font-size: 1.05rem; }
+        .mealup-nav-icon { width: 22px; height: 22px; flex: none; }
+        .mealup-nav-count { margin-inline-start: auto; min-width: 26px; padding: 3px 7px; border-radius: 999px; background: var(--meal-gold); color: #fff; text-align: center; font-size: .8rem; }
+        #mealup-recipe-count { background: #d7f7e5; color: #185638; }
+        .mealup-sidebar-footer { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--meal-border); }
+        .mealup-main { padding: clamp(25px, 3.2vw, 62px); min-width: 0; }
+        .mealup-main h1 { margin: 0; font-size: clamp(2.2rem, 3vw, 3.2rem); line-height: 1.1; letter-spacing: -.045em; }
+        :focus-visible { outline: 2px solid #a76a10; outline-offset: 3px; }
+
+        @media (max-width: 767px) {
+            .mealup-layout { grid-template-columns: minmax(0, 1fr); }
+            .mealup-sidebar { padding: 16px; }
+            .mealup-logo { margin-bottom: 16px; }
+            .mealup-sidebar-footer { display: none; }
+            .mealup-main { padding: 24px 16px; }
+        }
+    </style>
+    @stack('styles')
+</head>
 
 <body>
     <div class="mealup-layout">
@@ -115,20 +142,27 @@
                  alt="MealUp">
 
             <nav class="mealup-nav" aria-label="Navigasi utama">
-                <a class="mealup-nav-item" href="{{ url('/home') }}">Home</a>
+                <a class="mealup-nav-item" href="{{ url('/home') }}"><svg class="mealup-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</a>
 
                 <a class="mealup-nav-item" href="{{ route('pantry.index') }}"
                    @if (request()->routeIs('pantry.index')) aria-current="page" @endif>
+                    <svg class="mealup-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="4" rx="1"/><path d="M5 8v11h14V8M10 12h4"/></svg>
                     Pantry
+                    <span id="mealup-pantry-count" class="mealup-nav-count" hidden></span>
                 </a>
 
                 <a class="mealup-nav-item" href="{{ route('recipes.index') }}"
                    @if (request()->routeIs('recipes.index')) aria-current="page" @endif>
+                    <svg class="mealup-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6c-3-2-6-2-9-1v14c3-1 6-1 9 1 3-2 6-2 9-1V5c-3-1-6-1-9 1zm0 0v14"/></svg>
                     Recipe
+                    <span id="mealup-recipe-count" class="mealup-nav-count" hidden></span>
                 </a>
 
-                <span class="mealup-nav-item" aria-disabled="true">Saved</span>
+                <span class="mealup-nav-item" role="link" aria-disabled="true"><svg class="mealup-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h12v16l-6-4-6 4z"/></svg>Saved</span>
             </nav>
+            <div class="mealup-sidebar-footer">
+                <span class="mealup-nav-item" role="link" aria-disabled="true"><svg class="mealup-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4H4v16h6m-2-8h13m-4-4 4 4-4 4"/></svg>Logout</span>
+            </div>
         </aside>
 
         <main class="mealup-main">
