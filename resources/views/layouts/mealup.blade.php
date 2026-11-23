@@ -6,20 +6,30 @@
     <title>@yield('title') · MealUp</title>
 
     <style>
-        * {
+        *, *::before, *::after {
             box-sizing: border-box;
+        }
+
+        :root {
+            --meal-cream: #f9f5ec;
+            --meal-cream-soft: #fbf7ee;
+            --meal-brown: #3b2010;
+            --meal-gold: #a76a10;
+            --meal-border: #eadcc9;
+            --meal-muted: #74685f;
         }
 
         body {
             margin: 0;
-            background: #fbf7ee;
-            color: #3b2010;
-            font-family: system-ui, sans-serif;
+            background: var(--meal-cream);
+            color: var(--meal-brown);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
 
         .mealup-layout {
             display: grid;
-            grid-template-columns: 271px minmax(0, 1fr);
+            grid-template-columns: clamp(232px, 15.5vw, 294px) minmax(0, 1fr);
             min-height: 100vh;
         }
 
@@ -27,19 +37,22 @@
             position: sticky;
             top: 0;
             align-self: start;
+            display: flex;
+            flex-direction: column;
             height: 100vh;
             overflow-y: auto;
-            padding: 36px 20px;
+            padding: 36px 20px 24px;
             background: #fff;
-            border-right: 1px solid #eee5d8;
+            border-right: 1px solid var(--meal-border);
         }
 
         .mealup-logo {
             display: block;
-            width: 170px;
+            width: 166px;
             max-width: 100%;
             height: auto;
             margin: 0 auto 36px;
+            object-fit: contain;
         }
 
         .mealup-nav {
@@ -48,78 +61,79 @@
         }
 
         .mealup-nav-item {
-            display: block;
-            padding: 14px 16px;
-            border-left: 5px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            min-height: 50px;
+            padding: 12px 15px;
+            border-left: 4px solid transparent;
             border-radius: 14px;
-            color: inherit;
+            color: var(--meal-brown);
+            font-size: 1rem;
             font-weight: 600;
             text-decoration: none;
+            transition: background-color 150ms ease, transform 150ms ease, color 150ms ease, border-color 150ms ease;
         }
 
         .mealup-nav-item:hover[href] {
-            background: #fbf7ee;
+            background: var(--meal-cream-soft);
+            transform: translateX(2px);
         }
 
         .mealup-nav-item[aria-current="page"],
         .mealup-nav-item[aria-current="page"]:hover {
             border-left-color: #b06800;
-            background: #3b2010;
+            background: var(--meal-brown);
             color: #fff;
+            transform: none;
         }
 
-        .mealup-nav-item[aria-disabled="true"] {
-            color: #74685f;
+        .mealup-nav-icon {
+            width: 21px;
+            height: 21px;
+            flex: none;
+        }
+
+        .mealup-nav-count {
+            margin-inline-start: auto;
+            min-width: 24px;
+            padding: 2px 7px;
+            border-radius: 999px;
+            background: var(--meal-gold);
+            color: #fff;
+            text-align: center;
+            font-size: .78rem;
+            font-weight: 700;
+        }
+
+        #mealup-recipe-count {
+            background: #d7f7e5;
+            color: #185638;
+        }
+
+        .mealup-sidebar-footer {
+            margin-top: auto;
+            padding-top: 14px;
+            border-top: 1px solid var(--meal-border);
+        }
+
+        .mealup-sidebar-footer .mealup-nav-item:hover {
+            background: #fdf2e9;
+            color: #b06800;
         }
 
         .mealup-main {
-            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            min-height: 100vh;
         }
 
-        @media (max-width: 767px) {
-            .mealup-layout {
-                grid-template-columns: 1fr;
-            }
-
-            .mealup-sidebar {
-                position: static;
-                height: auto;
-                padding: 16px;
-                border-right: 0;
-                border-bottom: 1px solid #eee5d8;
-            }
-
-            .mealup-logo {
-                width: 130px;
-                margin-bottom: 16px;
-            }
-
-            .mealup-nav {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-
-            .mealup-main {
-                padding: 24px 16px;
-            }
-        }
-        :root {
-            --meal-cream: #f9f5ec;
-            --meal-brown: #3b2010;
-            --meal-gold: #a76a10;
-            --meal-border: #eadcc9;
+        .mealup-main-inner {
+            flex: 1 0 auto;
+            padding: clamp(24px, 3vw, 52px);
         }
 
-        body { background: var(--meal-cream); }
-        .mealup-layout { grid-template-columns: clamp(232px, 15.5vw, 294px) minmax(0, 1fr); }
-        .mealup-sidebar { display: flex; flex-direction: column; padding: 42px 21px 26px; }
-        .mealup-logo { margin-bottom: 48px; }
-        .mealup-nav { gap: 10px; }
-        .mealup-nav-item { display: flex; align-items: center; min-height: 54px; gap: 14px; font-size: 1.05rem; }
-        .mealup-nav-icon { width: 22px; height: 22px; flex: none; }
-        .mealup-nav-count { margin-inline-start: auto; min-width: 26px; padding: 3px 7px; border-radius: 999px; background: var(--meal-gold); color: #fff; text-align: center; font-size: .8rem; }
-        #mealup-recipe-count { background: #d7f7e5; color: #185638; }
-        .mealup-sidebar-footer { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--meal-border); }
-        .mealup-main { padding: clamp(25px, 3.2vw, 62px); min-width: 0; }
         .mealup-main[data-mealup-page="pantry"],
         .mealup-main[data-mealup-page="recipe"] {
             background-position: center top;
@@ -135,16 +149,18 @@
             background-image: url("{{ asset('assets/mealup-recipe-background.png') }}");
         }
 
-        .mealup-main h1 { margin: 0; font-size: clamp(2.2rem, 3vw, 3.2rem); line-height: 1.1; letter-spacing: -.045em; }
-        :focus-visible { outline: 2px solid #a76a10; outline-offset: 3px; }
-
-        @media (max-width: 767px) {
-            .mealup-layout { grid-template-columns: minmax(0, 1fr); }
-            .mealup-sidebar { padding: 16px; }
-            .mealup-logo { margin-bottom: 16px; }
-            .mealup-sidebar-footer { display: none; }
-            .mealup-main { padding: 24px 16px; }
+        .mealup-main h1 {
+            margin: 0;
+            font-size: clamp(2.1rem, 3vw, 3.1rem);
+            line-height: 1.1;
+            letter-spacing: -.045em;
         }
+
+        :focus-visible {
+            outline: 2px solid var(--meal-gold);
+            outline-offset: 3px;
+        }
+
         .mealup-page-bar,
         .mealup-demo-actions {
             display: flex;
@@ -163,7 +179,7 @@
             align-items: center;
             gap: 9px;
             margin: 0;
-            color: #74685f;
+            color: var(--meal-muted);
             font-size: .875rem;
             font-weight: 550;
         }
@@ -177,7 +193,9 @@
             content: '';
         }
 
-        .mealup-ready-indicator::before { background: #168662; }
+        .mealup-ready-indicator::before {
+            background: #168662;
+        }
 
         .mealup-plan {
             display: inline-flex;
@@ -187,7 +205,7 @@
             border: 1px solid var(--meal-border);
             border-radius: 999px;
             background: #fff;
-            color: #74685f;
+            color: var(--meal-muted);
             font-size: .875rem;
         }
 
@@ -201,10 +219,8 @@
             color: var(--meal-brown);
         }
 
-        .mealup-plan-name::before { background: #81766a; }
-
-        @media (max-width: 767px) {
-            .mealup-page-bar { margin-bottom: 18px; }
+        .mealup-plan-name::before {
+            background: #81766a;
         }
 
         .mealup-demo-reset {
@@ -222,13 +238,53 @@
             cursor: pointer;
         }
 
-        .mealup-demo-reset:hover { border-color: var(--meal-gold); }
-        .mealup-demo-reset span { color: var(--meal-gold); }
+        .mealup-demo-reset:hover {
+            border-color: var(--meal-gold);
+        }
+
+        .mealup-demo-reset span {
+            color: var(--meal-gold);
+        }
 
         .mealup-demo-error {
             margin: 0;
             color: #832f26;
             font-size: .875rem;
+        }
+
+        @media (max-width: 767px) {
+            .mealup-layout {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .mealup-sidebar {
+                position: static;
+                height: auto;
+                padding: 16px;
+                border-right: 0;
+                border-bottom: 1px solid var(--meal-border);
+            }
+
+            .mealup-logo {
+                width: 132px;
+                margin-bottom: 16px;
+            }
+
+            .mealup-nav {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .mealup-sidebar-footer {
+                display: none;
+            }
+
+            .mealup-main-inner {
+                padding: 24px 16px;
+            }
+
+            .mealup-page-bar {
+                margin-bottom: 18px;
+            }
         }
     </style>
     @stack('styles')
@@ -237,12 +293,18 @@
 <body>
     <div class="mealup-layout">
         <aside class="mealup-sidebar">
-            <img class="mealup-logo"
-                 src="{{ asset('assets/73d6a.png') }}"
-                 alt="MealUp">
+            <a href="{{ url('/home') }}" aria-label="MealUp Home">
+                <img class="mealup-logo"
+                     src="{{ asset('assets/73d6a.png') }}"
+                     alt="MealUp">
+            </a>
 
             <nav class="mealup-nav" aria-label="Navigasi utama">
-                <a class="mealup-nav-item" href="{{ url('/home') }}"><svg class="mealup-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</a>
+                <a class="mealup-nav-item" href="{{ url('/home') }}"
+                   @if (request()->is('home') || request()->routeIs('home*')) aria-current="page" @endif>
+                    <svg class="mealup-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+                    Home
+                </a>
 
                 <a class="mealup-nav-item" href="{{ route('pantry.index') }}"
                    @if (request()->routeIs('pantry.index')) aria-current="page" @endif>
@@ -265,36 +327,45 @@
                     <span id="mealup-saved-count" class="mealup-nav-count" hidden></span>
                 </a>
             </nav>
+
             <div class="mealup-sidebar-footer">
-                <span class="mealup-nav-item" role="link" aria-disabled="true"><svg class="mealup-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4H4v16h6m-2-8h13m-4-4 4 4-4 4"/></svg>Logout</span>
+                <a class="mealup-nav-item" href="{{ url('/') }}">
+                    <svg class="mealup-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4H4v16h6m-2-8h13m-4-4 4 4-4 4"/></svg>
+                    Logout
+                </a>
             </div>
         </aside>
 
         <main class="mealup-main">
-            @if (request()->routeIs('pantry.index', 'recipes.index', 'saved.index'))
-                <div class="mealup-page-bar">
-                    <p class="mealup-ready-indicator">Strict 100% Ready-to-Cook Engine Active</p>
+            <div class="mealup-main-inner">
+                @if (request()->routeIs('pantry.index', 'recipes.index', 'saved.index'))
+                    <div class="mealup-page-bar">
+                        <p class="mealup-ready-indicator">Strict 100% Ready-to-Cook Engine Active</p>
 
-                    <div class="mealup-demo-actions">
-                        <p id="mealup-demo-error" class="mealup-demo-error" role="status" hidden></p>
-                        <button type="button"
-                                id="mealup-demo-reset"
-                                class="mealup-demo-reset"
-                                data-pantry-url="{{ route('pantry.index') }}"
-                                data-on-pantry="{{ request()->routeIs('pantry.index') ? 'true' : 'false' }}">
-                            <span aria-hidden="true">⟳</span> Reset Demo
-                        </button>
-                        <div class="mealup-plan">
-                            <span>Plan</span>
-                            <strong class="mealup-plan-name">Free Plan</strong>
+                        <div class="mealup-demo-actions">
+                            <p id="mealup-demo-error" class="mealup-demo-error" role="status" hidden></p>
+                            <button type="button"
+                                    id="mealup-demo-reset"
+                                    class="mealup-demo-reset"
+                                    data-pantry-url="{{ route('pantry.index') }}"
+                                    data-on-pantry="{{ request()->routeIs('pantry.index') ? 'true' : 'false' }}">
+                                <span aria-hidden="true">⟳</span> Reset Demo
+                            </button>
+                            <div class="mealup-plan">
+                                <span>Plan</span>
+                                <strong class="mealup-plan-name">Free Plan</strong>
+                            </div>
                         </div>
                     </div>
-                </div>
-            @endif
+                @endif
 
-            @yield('content')
+                @yield('content')
+            </div>
+
+            @yield('footer')
         </main>
     </div>
+
     <script>
         const savedSidebarCount = document.querySelector('#mealup-saved-count');
 

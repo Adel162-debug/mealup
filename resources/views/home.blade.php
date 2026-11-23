@@ -1,272 +1,624 @@
-<!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meal Up - Home Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        mealBrown: '#43271b',
-                        mealCream: '#fbf7ee',
-                        mealAccent: '#b06800',
-                    }
-                }
+@extends('layouts.mealup')
+
+@section('title', 'Home')
+
+@push('styles')
+    <style>
+        .mealup-main .home-wrap {
+            max-width: 1160px;
+            margin: 0 auto;
+        }
+
+        /* 1. WELCOME CHEF SPLIT */
+        .mealup-main .home-welcome-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 32px;
+            align-items: center;
+        }
+
+        @media (min-width: 1024px) {
+            .mealup-main .home-welcome-grid {
+                grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+                gap: 40px;
             }
         }
-    </script>
-    <style>
-        body {
-            background: #fbf7ee;
+
+        .mealup-main .home-welcome-kicker {
+            margin: 0;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #b06800;
+        }
+
+        .mealup-main h1.home-welcome-title {
+            margin: 6px 0 0;
+            font-size: clamp(2.1rem, 3.6vw, 3rem);
+            font-weight: 800;
             color: #43271b;
-            font-family: 'Poppins', sans-serif;
+            line-height: 1.1;
+            letter-spacing: -0.025em;
         }
-        .app-shell {
-            min-height: 100vh;
-            overflow-x: hidden;
-            display: flex;
+
+        .mealup-main .home-welcome-desc {
+            margin: 14px 0 0;
+            max-width: 520px;
+            font-size: 0.975rem;
+            line-height: 1.65;
+            color: #5a4a42;
         }
-        .sidebar {
-            position: fixed;
-            z-index: 30;
-            inset: 0 auto 0 0;
+
+        .mealup-main .home-welcome-actions {
             display: flex;
-            flex-direction: column;
-            width: 271px;
-            padding: 24px 20px;
-            overflow-y: auto;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+            margin-top: 22px;
+        }
+
+        .mealup-main .home-pantry-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: 12px;
+            background: #43271b;
+            color: #fff;
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 8px 18px rgb(59 32 16 / 14%);
+            transition: transform 160ms ease, background-color 160ms ease;
+        }
+
+        .mealup-main .home-pantry-btn:hover {
+            transform: translateY(-2px);
+            background: #b06800;
+        }
+
+        .mealup-main .home-secondary-link {
+            padding: 11px 16px;
+            border: 1px solid #eadcc9;
+            border-radius: 12px;
             background: #fff;
-            border-right: 1px solid #eee5d8;
+            color: #43271b;
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: border-color 150ms ease, background-color 150ms ease;
         }
 
-        .meal-sidebar-brand {
-            display: flex;
-            justify-content: center;
-            margin: 10px 0 36px;
+        .mealup-main .home-secondary-link:hover {
+            border-color: #b06800;
+            background: #faf2e3;
         }
 
-        .meal-sidebar-brand img {
+        /* Susunan Foto Utama + 3 Doodle Menimpa di Atasnya */
+        .mealup-main .home-visual-stage {
+            position: relative;
+            padding: 18px;
+            margin: 10px 6px;
+        }
+
+        .mealup-main .home-visual-main-img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            border-radius: 22px;
+            border: 1px solid #eadcc9;
+            box-shadow: 0 14px 30px rgb(59 32 16 / 12%);
             display: block;
-            width: 170px;
-            height: auto;
         }
 
-        .meal-sidebar-menu {
+        .mealup-main .home-doodle-overlay {
+            position: absolute;
+            pointer-events: none;
+            object-fit: contain;
+            filter: drop-shadow(0 6px 12px rgb(47 25 16 / 18%));
+        }
+
+       .mealup-main .doodle-top-left {
+            top: -14px;
+            left: -12px;
+            width: 108px;
+            height: 108px;
+            transform: rotate(-24deg);
+        }
+
+        .mealup-main .doodle-center {
+            top: 52%;
+            left: 50%;
+            width: 136px;
+            height: 136px;
+            transform: translate(-50%, -48%) rotate(-22deg);
+        }
+
+        .mealup-main .doodle-bottom-right {
+            bottom: -14px;
+            right: -10px;
+            width: 108px;
+            height: 108px;
+            transform: rotate(24deg);
+        }
+        }
+
+        /* 2. OUR PROMISE */
+        .mealup-main h2.home-sec-title {
+            margin: 0;
+            font-size: clamp(1.35rem, 2.2vw, 1.75rem);
+            font-weight: 800;
+            color: #43271b;
+        }
+
+        .mealup-main .home-sec-sub {
+            margin: 4px 0 0;
+            font-size: 0.875rem;
+            color: #6e6056;
+        }
+
+        .mealup-main .home-promise-section {
+            margin-top: 48px;
+        }
+
+        .mealup-main .home-promise-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            margin-top: 18px;
+        }
+
+        @media (min-width: 1024px) {
+            .mealup-main .home-promise-grid {
+                grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+                align-items: start;
+            }
+        }
+
+        .mealup-main .home-promise-box {
+            padding: 20px;
+            border: 1px solid #eadcc9;
+            border-radius: 18px;
+            background: #fff;
+            box-shadow: 0 6px 20px rgb(59 32 16 / 5%);
+        }
+
+        .mealup-main .home-promise-kicker {
+            margin: 0;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #b06800;
+        }
+
+        .mealup-main .home-mini-stats {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .mealup-main .home-mini-stat {
+            padding: 12px;
+            border: 1px solid #f0e6d8;
+            border-radius: 12px;
+            background: #fbf7ee;
+            text-align: center;
+        }
+
+        .mealup-main .home-mini-stat strong {
+            display: block;
+            font-size: 1rem;
+            font-weight: 800;
+            color: #43271b;
+        }
+
+        .mealup-main .home-mini-stat span {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #6e6056;
+            text-transform: uppercase;
+        }
+
+        .mealup-main .home-ticket-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            margin-top: 16px;
+            padding: 16px;
+            border-radius: 14px;
+            background: #faf2e3;
+            border: 1px dashed #b06800;
+        }
+
+        .mealup-main .home-ticket-card h3 {
+            margin: 0;
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #43271b;
+        }
+
+        .mealup-main .home-ticket-card p {
+            margin: 4px 0 0;
+            font-size: 0.8rem;
+            color: #5a4a42;
+        }
+
+        .mealup-main .home-cta-pill {
+            flex-shrink: 0;
+            padding: 8px 14px;
+            border: 0;
+            border-radius: 8px;
+            background: #43271b;
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-decoration: none;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .mealup-main .home-cta-pill:hover {
+            background: #b06800;
+        }
+
+        .mealup-main .home-photo-mosaic {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .mealup-main .home-photo-mosaic img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 14px;
+            border: 1px solid #eadcc9;
+            background: #fff;
+        }
+
+        /* 3. BIFEST SHOWCASE EVENT (TANPA GAMBAR) */
+        .mealup-main .home-event-section {
+            margin-top: 48px;
+        }
+
+        .mealup-main .home-event-card {
+            margin-top: 16px;
+            padding: 26px 28px;
+            border: 1px solid #eadcc9;
+            border-radius: 20px;
+            background: #fff;
+            box-shadow: 0 8px 24px rgb(59 32 16 / 6%);
+        }
+
+        .mealup-main .home-event-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: #fff0cd;
+            color: #714500;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .mealup-main .home-event-title {
+            margin: 10px 0 0;
+            font-size: clamp(1.5rem, 2.6vw, 2rem);
+            font-weight: 800;
+            color: #43271b;
+            line-height: 1.15;
+        }
+
+        .mealup-main .home-event-meta-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        @media (min-width: 640px) {
+            .mealup-main .home-event-meta-list {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        .mealup-main .home-event-chip {
+            padding: 14px 16px;
+            border: 1px solid #f0e6d8;
+            border-radius: 12px;
+            background: #fbf7ee;
+        }
+
+        .mealup-main .home-event-chip small {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #6e6056;
+        }
+
+        .mealup-main .home-event-chip strong {
+            display: block;
+            margin-top: 4px;
+            font-size: 0.92rem;
+            font-weight: 800;
+            color: #43271b;
+        }
+
+        .mealup-main .home-banner-strip {
+            margin-top: 38px;
+            padding: 18px 22px;
+            border-radius: 14px;
+            background: #43271b;
+            color: #fff;
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        /* 4. FOOTER */
+        footer.landing-style-footer {
+            width: 100%;
+            margin-top: auto;
+            background: #2f1910;
+            color: #fff;
+            padding: 48px 36px 32px;
+        }
+
+        .landing-footer-inner {
+            max-width: 1152px;
+            margin: 0 auto;
+        }
+
+        .landing-footer-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 32px;
+            font-size: 0.75rem;
+        }
+
+        @media (min-width: 768px) {
+            .landing-footer-grid {
+                grid-template-columns: repeat(5, minmax(0, 1fr));
+            }
+        }
+
+        .landing-footer-brand {
+            grid-column: span 2 / span 2;
+        }
+
+        @media (min-width: 768px) {
+            .landing-footer-brand {
+                grid-column: span 1 / span 1;
+            }
+        }
+
+        .landing-footer-grid h3 {
+            margin: 0;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #fcd34d;
+        }
+
+        .landing-footer-grid ul {
+            list-style: none;
+            margin: 12px 0 0;
+            padding: 0;
             display: grid;
             gap: 8px;
         }
 
-        .meal-sidebar-item {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            width: 100%;
-            min-height: 52px;
-            padding: 10px 16px;
-            border: 0;
-            border-left: 5px solid transparent;
-            border-radius: 14px;
-            background: transparent;
-            color: #3b2010;
-            font-weight: 600;
-            text-align: left;
+        .landing-footer-grid a {
+            color: rgb(254 243 199 / 80%);
             text-decoration: none;
         }
 
-        .meal-sidebar-icon {
-            display: inline-grid;
-            width: 24px;
-            place-items: center;
-            font-size: 22px;
-            line-height: 1;
-        }
-
-        .meal-sidebar-item:hover:not(:disabled) {
-            background: #fbf7ee;
-        }
-
-        .meal-sidebar-item[aria-current="page"],
-        .meal-sidebar-item[aria-current="page"]:hover {
-            border-left-color: #b06800;
-            background: #3b2010;
+        .landing-footer-grid a:hover {
             color: #fff;
         }
 
-        .meal-sidebar-item:focus-visible {
-            outline: 2px solid #b06800;
-            outline-offset: 2px;
+        .landing-footer-bottom {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid rgb(255 255 255 / 10%);
+            font-size: 0.75rem;
+            color: rgb(254 243 199 / 60%);
         }
 
-        .meal-sidebar-item:disabled {
-            opacity: 0.55;
-            cursor: default;
+        @media (min-width: 640px) {
+            .landing-footer-bottom {
+                flex-direction: row;
+            }
         }
 
-        .meal-sidebar-footer {
-            margin-top: auto;
-            padding-top: 16px;
-            border-top: 1px solid #eee5d8;
+        .home-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            display: none;
+            place-items: center;
+            padding: 0 20px;
+            background: rgb(0 0 0 / 60%);
+            backdrop-filter: blur(4px);
         }
-        .main-content {
+
+        .home-modal-backdrop.is-open {
+            display: grid;
+        }
+
+        .home-modal-card {
             position: relative;
-            min-height: 100vh;
-            margin-left: 271px;
-            flex: 1;
+            width: 100%;
+            max-width: 600px;
+            max-height: calc(100vh - 48px);
+            padding: 28px;
+            overflow-y: auto;
+            border-radius: 18px;
+            background: #fbf7ee;
+            color: #43271b;
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 25%);
         }
-        .hero-header {
-            background-image: url("{{ asset('assets/be5a8.svg') }}");
-            background-repeat: no-repeat;
-            background-position: right -40px center;
-            background-size: 65% auto;
+
+        .home-modal-close {
+            position: absolute;
+            top: 14px;
+            right: 16px;
+            width: 34px;
+            height: 34px;
+            border: 0;
+            border-radius: 999px;
+            background: #eadcc9;
+            color: #43271b;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
         }
     </style>
-</head>
-<body class="bg-mealCream text-mealBrown font-sans antialiased selection:bg-amber-200">
+@endpush
 
-    <div class="app-shell">
-        <!-- SIDEBAR -->
-        <aside id="sidebar" class="sidebar">
-            <a href="{{ url('/home') }}" class="meal-sidebar-brand">
-                <img src="{{ asset('assets/73d6a.png') }}" alt="Meal Up">
-            </a>
+@section('content')
+    <div class="home-wrap">
+       <!-- 1. WELCOME CHEF (KIRI: TEKS & 1 TOMBOL PANTRY | KANAN: FOTO & 3 DOODLE MENYAMPING) -->
+        <section class="home-welcome-grid">
+            <div>
+                <p class="home-welcome-kicker">Your Kitchen Workspace</p>
+                <h1 class="home-welcome-title">Welcome, Chef</h1>
+                <p class="home-welcome-desc">
+                    Ready to turn everyday ingredients into practical meals? Check what is sitting in your pantry, keep track of freshness, and cook without unnecessary waste.
+                </p>
 
-            <nav class="meal-sidebar-menu" aria-label="Navigasi utama">
-                <a href="{{ url('/home') }}" class="meal-sidebar-item" aria-current="page">
-                    <span class="meal-sidebar-icon" aria-hidden="true">⌂</span>
-                    <span>Home</span>
-                </a>
-
-                <button type="button" class="meal-sidebar-item" onclick="openDialog('pantry')">
-                    <span class="meal-sidebar-icon" aria-hidden="true">▣</span>
-                    <span>Pantry</span>
-                </button>
-
-                <button type="button" class="meal-sidebar-item" onclick="openDialog('recipes')">
-                    <span class="meal-sidebar-icon" aria-hidden="true">▤</span>
-                    <span>Recipe</span>
-                </button>
-
-                <button type="button" class="meal-sidebar-item" disabled>
-                    <span class="meal-sidebar-icon" aria-hidden="true">★</span>
-                    <span>Saved</span>
-                </button>
-            </nav>
-
-            <div class="meal-sidebar-footer">
-                <button type="button" class="meal-sidebar-item" disabled>
-                    <span class="meal-sidebar-icon" aria-hidden="true">↪</span>
-                    <span>Logout</span>
-                </button>
+                <div class="home-welcome-actions">
+                    <a href="{{ url('/pantry') }}" class="home-pantry-btn">
+                        Go to Pantry &rarr;
+                    </a>
+                </div>
             </div>
-        </aside>
 
-        <!-- MAIN CONTENT AREA -->
-        <main class="main-content">
-            <!-- HERO SECTION -->
-            <header class="relative min-h-[540px] overflow-hidden bg-mealCream hero-header flex items-center px-8 lg:px-12 py-16">
-                <div class="grid grid-cols-1 lg:grid-cols-[45%_55%] items-center w-full max-w-[1300px] z-10 mx-auto">
-                    <div class="py-6 z-20">
-                        <h1 class="text-[42px] lg:text-[58px] font-bold font-serif leading-tight">
-                            Welcome back, <span class="text-mealAccent">Chef!</span>
-                        </h1>
-                        <p class="mt-4 text-[18px] lg:text-[20px] font-medium text-gray-700 max-w-lg">
-                            Let's check what ingredients you have in your pantry and whip up something delicious today.
-                        </p>
-                        <button type="button" onclick="openDialog('recipes')" class="mt-6 inline-flex items-center justify-center px-6 py-3 rounded-xl bg-mealAccent text-white font-semibold text-lg shadow-lg hover:bg-amber-700 transition cursor-pointer">
-                            Find Recipes Now 🍳
-                        </button>
+            <div class="home-visual-stage">
+                <img
+                    src="{{ asset('assets/images (4).jpeg') }}"
+                    alt="Fresh ingredients and pantry staples"
+                    class="home-visual-main-img"
+                />
+                <img
+                    src="{{ asset('assets/garlicdoodle.png') }}"
+                    alt=""
+                    aria-hidden="true"
+                    class="home-doodle-overlay doodle-top-left"
+                />
+                <img
+                    src="{{ asset('assets/tomatodoodle.png') }}"
+                    alt=""
+                    aria-hidden="true"
+                    class="home-doodle-overlay doodle-center"
+                />
+                <img
+                    src="{{ asset('assets/avocadodoodle.png') }}"
+                    alt=""
+                    aria-hidden="true"
+                    class="home-doodle-overlay doodle-bottom-right"
+                />
+            </div>
+        </section>
+
+        <!-- 2. OUR PROMISE -->
+        <section class="home-promise-section">
+            <h2 class="home-sec-title">Our Promise</h2>
+            <p class="home-sec-sub">Less food waste, faster meal decisions every day.</p>
+
+            <div class="home-promise-grid">
+                <div>
+                    <div class="home-promise-box">
+                        <p class="home-promise-kicker">Smart pantry habits — simple &amp; practical</p>
+
+                        <div class="home-mini-stats">
+                            <div class="home-mini-stat">
+                                <strong>Zero Waste</strong>
+                                <span>Expiry Alerts</span>
+                            </div>
+                            <div class="home-mini-stat">
+                                <strong>100% Match</strong>
+                                <span>Ready Recipes</span>
+                            </div>
+                            <div class="home-mini-stat">
+                                <strong>Quick Log</strong>
+                                <span>Add &amp; Edit</span>
+                            </div>
+                            <div class="home-mini-stat">
+                                <strong>Kost Ready</strong>
+                                <span>Budget Friendly</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- AREA GAMBAR UTAMA UKURAN 640px x 660px + HIASAN SVG -->
-                    <div class="relative w-[640px] h-[660px] flex items-center justify-center mx-auto lg:mx-0 z-10 pointer-events-none">
-                        <img src="{{ asset('assets/cdea1.png') }}" alt="Delicious Dish" class="w-[640px] h-[660px] object-contain drop-shadow-2xl rotate-[5deg] z-10" />
-
-                        <img src="{{ asset('assets/375a6.svg') }}" alt="" class="absolute top-[80px] left-[40px] w-12 h-12 rotate-[-15deg] z-20 opacity-90" />
-                        <img src="{{ asset('assets/84885.svg') }}" alt="" class="absolute top-[120px] right-[60px] w-14 h-14 rotate-[25deg] z-20 opacity-90" />
-                        <img src="{{ asset('assets/b9d49.svg') }}" alt="" class="absolute bottom-[100px] left-[80px] w-16 h-16 rotate-[10deg] z-20 opacity-90" />
-                        <img src="{{ asset('assets/d1ff1.svg') }}" alt="" class="absolute bottom-[80px] right-[90px] w-14 h-14 rotate-[-20deg] z-20 opacity-90" />
-                        <img src="{{ asset('assets/ef6de.svg') }}" alt="" class="absolute top-[280px] left-[10px] w-12 h-12 rotate-[45deg] z-20 opacity-90" />
-                        <img src="{{ asset('assets/164fe.svg') }}" alt="" class="absolute top-[240px] right-[20px] w-12 h-12 rotate-[-30deg] z-20 opacity-90" />
+                    <div class="home-ticket-card">
+                        <div>
+                            <h3>QUICK RECIPE MATCH</h3>
+                            <p>Check ingredients in your pantry and see what you can cook right now.</p>
+                        </div>
+                        <button type="button" onclick="openDialog('recipes')" class="home-cta-pill">
+                            Find Recipes
+                        </button>
                     </div>
                 </div>
-            </header>
 
-            <!-- DASHBOARD CONTENT -->
-            <div class="relative z-20 w-full max-w-[1150px] mx-auto px-6 pb-20 mt-4">
-                <!-- USE SOON SECTION -->
-                <section class="rounded-2xl p-8 lg:p-10 bg-mealBrown text-white shadow-2xl">
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
-                        <h2 class="text-[32px] lg:text-[38px] font-bold tracking-tight">Use Soon</h2>
-                        <button type="button" onclick="openDialog('pantry')" class="px-5 py-2.5 rounded-lg bg-mealAccent text-white font-semibold hover:bg-amber-700 transition cursor-pointer shadow-md">
-                            Manage Pantry
-                        </button>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-                        <div class="overflow-hidden rounded-xl bg-[#371f16] text-white shadow-lg hover:-translate-y-1.5 transition border border-white/10">
-                            <div class="h-[180px] overflow-hidden bg-white flex items-center justify-center p-2">
-                                <img src="{{ asset('assets/59b25.png') }}" alt="Spinach" class="w-full h-full object-contain" />
-                            </div>
-                            <div class="p-4">
-                                <strong class="block text-[20px] font-bold">Spinach</strong>
-                                <span class="inline-block mt-3 px-3 py-1 bg-mealAccent text-white text-xs rounded-full font-semibold">Expires tomorrow</span>
-                            </div>
-                        </div>
-                        <div class="overflow-hidden rounded-xl bg-[#371f16] text-white shadow-lg hover:-translate-y-1.5 transition border border-white/10">
-                            <div class="h-[180px] overflow-hidden bg-white flex items-center justify-center p-2">
-                                <img src="{{ asset('assets/9e8de.png') }}" alt="Tomat" class="w-full h-full object-contain" />
-                            </div>
-                            <div class="p-4">
-                                <strong class="block text-[20px] font-bold">Tomat</strong>
-                                <span class="inline-block mt-3 px-3 py-1 bg-rose-700 text-white text-xs rounded-full font-semibold">Expires in 2 days</span>
-                            </div>
-                        </div>
-                        <div class="overflow-hidden rounded-xl bg-[#371f16] text-white shadow-lg hover:-translate-y-1.5 transition border border-white/10">
-                            <div class="h-[180px] overflow-hidden bg-white flex items-center justify-center p-2">
-                                <img src="{{ asset('assets/13049.png') }}" alt="Chicken" class="w-full h-full object-contain" />
-                            </div>
-                            <div class="p-4">
-                                <strong class="block text-[20px] font-bold">Chicken</strong>
-                                <span class="inline-block mt-3 px-3 py-1 bg-red-800 text-white text-xs rounded-full font-semibold">Expires today</span>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- RECENT RECIPES SECTION -->
-                <section class="pt-16 pb-10">
-                    <div class="flex items-center justify-between gap-6">
-                        <h2 class="text-[32px] lg:text-[38px] font-bold text-mealBrown">Recent Recipes</h2>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-                        <div class="grid grid-cols-[40%_60%] items-center overflow-hidden rounded-2xl bg-white text-mealBrown shadow-md border border-mealBrown/10 hover:shadow-xl transition">
-                            <img src="{{ asset('assets/9c08e.png') }}" alt="Soto Ayam Banjar" class="w-full h-full min-h-[140px] object-cover" />
-                            <div class="p-5 flex flex-col justify-center">
-                                <h3 class="font-bold text-[20px]">Soto Ayam Banjar</h3>
-                                <p class="mt-1 text-xs text-gray-600">Traditional warm aromatic soup</p>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-[40%_60%] items-center overflow-hidden rounded-2xl bg-white text-mealBrown shadow-md border border-mealBrown/10 hover:shadow-xl transition">
-                            <img src="{{ asset('assets/67fe4.png') }}" alt="Ayam Serundeng" class="w-full h-full min-h-[140px] object-cover" />
-                            <div class="p-5 flex flex-col justify-center">
-                                <h3 class="font-bold text-[20px]">Ayam Serundeng</h3>
-                                <p class="mt-1 text-xs text-gray-600">Crispy spiced fried chicken</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+                <div class="home-photo-mosaic">
+                    <img src="{{ asset('assets/2aef4.png') }}" alt="Fresh pantry ingredients" />
+                    <img src="{{ asset('assets/7311b.png') }}" alt="Homemade meal prep" />
+                    <img src="{{ asset('assets/c6596.png') }}" alt="Healthy ingredients" />
+                    <img src="{{ asset('assets/a77d2.png') }}" alt="Dish ready to serve" />
+                </div>
             </div>
-        </main>
+        </section>
+
+        <!-- 3. EVENT SHOWCASE: BIFEST (TANPA GAMBAR) -->
+        <section class="home-event-section">
+            <h2 class="home-sec-title">Showcase Event</h2>
+            <p class="home-sec-sub">Meet the Meal Up team and try the live web showcase in person.</p>
+
+            <div class="home-event-card">
+                <span class="home-event-badge">Live Web Showcase</span>
+                <h3 class="home-event-title">See you soon at BIFEST!</h3>
+                <p class="home-welcome-desc" style="margin-top: 10px; max-width: 680px; font-size: 0.92rem;">
+                    Come visit our booth to explore how Meal Up helps you track pantry ingredients and match recipes effortlessly.
+                </p>
+
+                <div class="home-event-meta-list">
+                    <div class="home-event-chip">
+                        <small>Date</small>
+                        <strong>24 November</strong>
+                    </div>
+                    <div class="home-event-chip">
+                        <small>Location</small>
+                        <strong>Gerai Binusian</strong>
+                    </div>
+                    <div class="home-event-chip">
+                        <small>Time</small>
+                        <strong>1 PM - 4 PM</strong>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. BANNER STRIP -->
+        <div class="home-banner-strip">
+            Meal Up — Track Your Pantry Stock &amp; Cook What You Already Have
+        </div>
     </div>
 
-    <!-- MODAL / DIALOG POPUP -->
-    <div id="appModal" class="fixed inset-0 z-50 hidden place-items-center bg-black/60 px-5 backdrop-blur-sm">
-        <div class="relative w-full max-w-[620px] max-h-[calc(100vh-48px)] overflow-y-auto rounded-[18px] bg-mealCream p-[42px] shadow-2xl">
-            <button type="button" onclick="closeDialog()" class="absolute right-5 top-4 w-9 h-9 rounded-full bg-gray-200 text-mealBrown font-bold text-xl flex items-center justify-center hover:bg-gray-300 transition cursor-pointer border-0">
+    <div id="appModal" class="home-modal-backdrop">
+        <div class="home-modal-card">
+            <button type="button" onclick="closeDialog()" class="home-modal-close" aria-label="Tutup popup">
                 &times;
             </button>
             <div id="modalContent"></div>
@@ -278,63 +630,92 @@
             const modal = document.getElementById('appModal');
             const content = document.getElementById('modalContent');
 
-            if (type === 'pantry') {
+            if (type === 'recipes') {
                 content.innerHTML = `
-                    <span class="text-mealAccent font-semibold text-sm tracking-widest uppercase">Inventory</span>
-                    <h2 class="mt-1 mb-6 text-[32px] font-bold text-mealBrown">Your Pantry Stock</h2>
-                    <div class="grid gap-3">
-                        <div class="grid grid-cols-[64px_1fr_auto] items-center gap-3.5 bg-white p-2.5 rounded-xl shadow-sm">
-                            <img src="{{ asset('assets/59b25.png') }}" alt="" class="w-16 h-16 rounded-lg object-contain bg-gray-50 p-1">
-                            <div>
-                                <strong class="font-bold">Spinach</strong>
-                                <small class="text-xs text-gray-500 block">Qty: 2 bunches • Expires tomorrow</small>
-                            </div>
-                            <span class="px-3 py-1 bg-rose-100 text-rose-800 text-xs rounded-full font-semibold">Use Soon</span>
+                    <span style="color:#b06800;font-weight:700;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;">Recipe Match</span>
+                    <h2 style="margin:4px 0 16px;font-size:26px;font-weight:800;color:#43271b;">Ready With Your Pantry</h2>
+                    <p style="font-size:14px;color:#5a4a42;margin:0 0 16px;">Select your checked ingredients in Pantry to see matching recipes right away.</p>
+                    <div style="display:grid;gap:10px;">
+                        <div style="background:#fff;padding:12px 14px;border-radius:12px;border:1px solid #eadcc9;">
+                            <strong>Quick Pantry Stir-Fry</strong>
+                            <div style="font-size:12px;color:#6e6056;margin-top:2px;">Use expiring veggies &amp; protein • ~15 mins</div>
                         </div>
-                        <div class="grid grid-cols-[64px_1fr_auto] items-center gap-3.5 bg-white p-2.5 rounded-xl shadow-sm">
-                            <img src="{{ asset('assets/9e8de.png') }}" alt="" class="w-16 h-16 rounded-lg object-contain bg-gray-50 p-1">
-                            <div>
-                                <strong class="font-bold">Tomat</strong>
-                                <small class="text-xs text-gray-500 block">Qty: 5 pcs • Expires in 2 days</small>
-                            </div>
-                            <span class="px-3 py-1 bg-amber-100 text-amber-800 text-xs rounded-full font-semibold">Active</span>
+                        <div style="background:#fff;padding:12px 14px;border-radius:12px;border:1px solid #eadcc9;">
+                            <strong>Fresh Herb &amp; Pantry Bowl</strong>
+                            <div style="font-size:12px;color:#6e6056;margin-top:2px;">Simple everyday ingredients • ~10 mins</div>
                         </div>
                     </div>
-                    <button type="button" onclick="alert('Fitur tambah bahan aktif!')" class="mt-6 w-full py-3 rounded-lg bg-mealBrown text-white font-semibold hover:bg-mealAccent transition cursor-pointer">
-                        + Add New Ingredient
-                    </button>
-                `;
-            } else if (type === 'recipes') {
-                content.innerHTML = `
-                    <span class="text-mealAccent font-semibold text-sm tracking-widest uppercase">AI Assistant</span>
-                    <h2 class="mt-1 mb-6 text-[32px] font-bold text-mealBrown">Smart Recipe Generator</h2>
-                    <div class="flex gap-2">
-                        <input type="text" placeholder="Masukkan bahan yang ingin dimasak..." class="flex-1 border-2 border-amber-200 rounded-lg p-3 bg-white focus:outline-none focus:border-mealAccent">
-                        <button type="button" onclick="alert('Mencari resep terbaik...')" class="px-5 py-3 rounded-lg bg-mealBrown text-white font-semibold hover:bg-mealAccent transition cursor-pointer">Cari</button>
-                    </div>
-                    <div class="mt-6 p-4 bg-white rounded-xl shadow-sm">
-                        <h4 class="font-bold text-lg text-mealBrown">Rekomendasi Hari Ini:</h4>
-                        <p class="text-sm text-gray-600 mt-1">Soto Ayam Banjar & Ayam Serundeng - Menu istimewa menggunakan bahan stok dapur Anda.</p>
-                    </div>
+                    <a href="{{ url('/pantry') }}" style="display:block;text-align:center;text-decoration:none;margin-top:20px;padding:11px;border-radius:10px;background:#43271b;color:#fff;font-weight:700;">
+                        Go to Pantry &amp; Select Ingredients →
+                    </a>
                 `;
             }
 
-            modal.classList.remove('hidden');
-            modal.classList.add('grid');
+            modal.classList.add('is-open');
         }
 
         function closeDialog() {
-            const modal = document.getElementById('appModal');
-            modal.classList.remove('grid');
-            modal.classList.add('hidden');
+            document.getElementById('appModal').classList.remove('is-open');
         }
 
-        window.onclick = function(event) {
+        window.addEventListener('click', function (event) {
             const modal = document.getElementById('appModal');
             if (event.target === modal) {
                 closeDialog();
             }
-        }
+        });
     </script>
-</body>
-</html>
+@endsection
+
+@section('footer')
+    <!-- 5. FOOTER -->
+    <footer id="contact" class="landing-style-footer">
+        <div class="landing-footer-inner">
+            <div class="landing-footer-grid">
+                <div class="landing-footer-brand">
+                    <img src="{{ asset('assets/52a41.png') }}" alt="Meal Up" style="height: auto; width: 144px;" />
+                    <p style="margin: 12px 0 0; color: rgb(254 243 199 / 70%);">Cook less, waste less with smart ingredient tracking.</p>
+                </div>
+
+                <div>
+                    <h3>About</h3>
+                    <ul>
+                        <li><a href="{{ url('/#about') }}">Our Mission</a></li>
+                        <li><a href="{{ url('/#features') }}">Features</a></li>
+                        <li><a href="{{ url('/#faq') }}">FAQs</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3>Pages</h3>
+                    <ul>
+                        <li><a href="{{ url('/home') }}">Home</a></li>
+                        <li><a href="{{ url('/pantry') }}">Pantry</a></li>
+                        <li><a href="{{ url('/recipes') }}">Recipes</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3>Account</h3>
+                    <ul>
+                        <li><a href="{{ url('/home') }}">Sign in</a></li>
+                        <li><a href="{{ url('/home') }}">Sign up</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3>Contact</h3>
+                    <ul>
+                        <li><a href="mailto:mealup@gmail.com">mealup@gmail.com</a></li>
+                    </ul>
+                    <img src="{{ asset('assets/c65f1.png') }}" alt="Social media" style="margin-top: 12px; height: auto; width: 112px;" />
+                </div>
+            </div>
+
+            <div class="landing-footer-bottom">
+                <img src="{{ asset('assets/3217c.png') }}" alt="© Meal Up" style="height: auto; width: 144px; opacity: 0.8;" />
+                <span>&copy; {{ date('Y') }} Meal Up. All rights reserved.</span>
+            </div>
+        </div>
+    </footer>
+@endsection
