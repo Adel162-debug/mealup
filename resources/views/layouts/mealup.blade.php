@@ -389,37 +389,6 @@
         window.addEventListener('pageshow', (event) => {
             if (event.persisted) refreshSavedSidebarCount();
         });
-
-        const resetDemoButton = document.querySelector('#mealup-demo-reset');
-
-        resetDemoButton?.addEventListener('click', () => {
-            const resetDemoError = document.querySelector('#mealup-demo-error');
-            resetDemoError.hidden = true;
-
-            const confirmed = window.confirm(
-                'Kembalikan Pantry ke data contoh? Bahan tambahan, hasil edit, pilihan, favorit, dan riwayat memasak di tab ini akan dihapus.'
-            );
-
-            if (!confirmed) {
-                return;
-            }
-
-            try {
-                sessionStorage.removeItem('mealup.favorites.v1');
-                sessionStorage.removeItem('mealup.cooked.v1');
-                sessionStorage.removeItem('mealup.pantry.v1');
-            } catch (error) {
-                resetDemoError.textContent = 'Data demo tidak bisa direset di tab ini.';
-                resetDemoError.hidden = false;
-                return;
-            }
-
-            if (resetDemoButton.dataset.onPantry === 'true') {
-                window.location.reload();
-            } else {
-                window.location.replace(resetDemoButton.dataset.pantryUrl);
-            }
-        });
     </script>
 </body>
 </html>
