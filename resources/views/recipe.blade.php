@@ -478,6 +478,36 @@
             font-weight: 650;
             cursor: pointer;
         }
+        .recipe-recently-cooked {
+            margin-top: 24px;
+            padding: 18px 22px;
+            border: 1px solid var(--meal-border);
+            border-radius: 16px;
+            background: #fff;
+        }
+
+        .recipe-recently-cooked h2 {
+            margin: 0 0 10px;
+            font-size: 1.15rem;
+        }
+
+        .recipe-cooked-history {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .recipe-cooked-history li {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 4px 16px;
+            padding: 8px 0;
+        }
+
+        .recipe-cooked-history li + li { border-top: 1px solid var(--meal-border); }
+        .recipe-cooked-history time { color: #6e6056; font-size: .875rem; }
     </style>
 @endpush
 
@@ -746,7 +776,9 @@
                             </dl>
 
                             @if ($missingCount === 0)
-                                <details class="recipe-cooked" data-pantry-url="{{ route('pantry.index') }}">
+                                <details class="recipe-cooked"
+                                         data-recipe-name="{{ $recipe['name'] }}"
+                                         data-pantry-url="{{ route('pantry.index') }}">
                                     <summary>Mark as Cooked &amp; Update Pantry</summary>
                                     <p>Isi stok tersisa, misalnya 150 g. Masukkan 0 jika stok habis.</p>
                                     <form class="recipe-cooked-form">
@@ -806,8 +838,74 @@
                 </div>
             @endif
         </section>
+    <section id="recipe-recently-cooked" class="recipe-recently-cooked"
+             aria-labelledby="recently-cooked-heading" hidden>
+        <h2 id="recently-cooked-heading">Recently Cooked</h2>
+        <ul class="recipe-cooked-history"></ul>
+    </section>
+
     <script>
         const pantryStorageKey = 'mealup.pantry.v1';
+        const cookedHistoryKey = 'mealup.cooked.v1';
+        const cookedHistorySection = document.querySelector('#recipe-recently-cooked');
+        const cookedHistoryList = cookedHistorySection.querySelector('.recipe-cooked-history');
+        const cookedHistoryDate = new Intl.DateTimeFormat('id-ID', {
+            dateStyle: 'medium',
+            timeStyle: 'short',
+        });
+
+        function readCookedHistory() {
+            const saved = sessionStorage.getItem(cookedHistoryKey);
+
+            if (saved === null) {
+                return [];
+            }
+
+            let entries;
+            try {
+                entries = JSON.parse(saved);
+            } catch {
+                return [];
+            }
+
+            return Array.isArray(entries)
+                ? entries.filter((entry) => (
+                    typeof entry?.name === 'string'
+                    && typeof entry.cookedAt === 'string'
+                    && Number.isFinite(Date.parse(entry.cookedAt))
+                ))
+                : [];
+        }
+
+        function recordCookedRecipe(name) {
+            const recent = [{ name, cookedAt: new Date().toISOString() }, ...readCookedHistory()];
+            sessionStorage.setItem(cookedHistoryKey, JSON.stringify(recent.slice(0, 5)));
+        }
+
+        function renderCookedHistory() {
+            let entries = [];
+            try {
+                entries = readCookedHistory();
+            } catch (error) {
+                console.warn('Riwayat memasak tidak bisa dibaca di tab ini.', error);
+            }
+
+            cookedHistoryList.replaceChildren();
+
+            entries.slice(0, 5).forEach((entry) => {
+                const item = document.createElement('li');
+                const name = document.createElement('strong');
+                const time = document.createElement('time');
+
+                name.textContent = entry.name;
+                time.dateTime = entry.cookedAt;
+                time.textContent = cookedHistoryDate.format(new Date(entry.cookedAt));
+                item.append(name, time);
+                cookedHistoryList.append(item);
+            });
+
+            cookedHistorySection.hidden = cookedHistoryList.childElementCount === 0;
+        }
 
         const normalizeIngredient = (value) => value.trim().toLowerCase();
         const isOutOfStock = (ingredient) => ingredient?.quantity?.trim?.() === '0';
@@ -880,6 +978,7 @@
             }
 
             details.open = false;
+            form.querySelector('.recipe-cooked-return')?.remove();
             fields.replaceChildren();
             status.hidden = true;
             submitButton.hidden = true;
@@ -966,6 +1065,20 @@
                     sessionStorage.setItem(pantryStorageKey, JSON.stringify(currentStock));
                 } catch {
                     showStatus('Perubahan stok tidak bisa disimpan di tab ini.');
+                    return;
+                }
+
+                try {
+                    recordCookedRecipe(details.dataset.recipeName);
+                } catch (error) {
+                    showStatus('Stok sudah disimpan, tetapi riwayat memasak tidak bisa dicatat di tab ini.');
+                    submitButton.hidden = true;
+                    const pantryLink = document.createElement('a');
+                    pantryLink.className = 'recipe-cooked-return';
+                    pantryLink.href = details.dataset.pantryUrl;
+                    pantryLink.textContent = 'Kembali ke Pantry';
+                    form.append(pantryLink);
+                    form.onsubmit = (submitEvent) => submitEvent.preventDefault();
                     return;
                 }
 
@@ -1117,9 +1230,11 @@
             }
         }
 
+        renderCookedHistory();
         renderAvailableIngredients();
         window.addEventListener('pageshow', (event) => {
             if (event.persisted) {
+                renderCookedHistory();
                 renderAvailableIngredients();
             }
         });
