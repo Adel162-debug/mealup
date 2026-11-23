@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\RecipeController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -16,5 +17,4 @@ Route::get('/home', function () {
 
 Route::view('/pantry', 'pantry')->name('pantry.index');
 
-Route::view('/recipes', 'recipe')->name('recipes.index');
-
+Route::get('/recipes', [RecipeController::class, 'index'])->name('recipes.index');
