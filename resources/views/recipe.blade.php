@@ -413,6 +413,19 @@
         .recipe-add-ingredient:hover {
             background: #f4e7cd;
         }
+        .recipe-ingredient-info {
+            display: grid;
+            flex: 1 1 8rem;
+            gap: 3px;
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+
+        .recipe-ingredient-stock {
+            color: #6e6056;
+            font-size: .8rem;
+            line-height: 1.4;
+        }
     </style>
 @endpush
 
@@ -690,8 +703,11 @@
                                             $isMissing = in_array($ingredient, $recipe['missing_ingredients'], true);
                                         @endphp
 
-                                        <li>
-                                            <strong>{{ $ingredient }}</strong>
+                                        <li data-pantry-ingredient="{{ $ingredient }}">
+                                            <div class="recipe-ingredient-info">
+                                                <strong>{{ $ingredient }}</strong>
+                                                <small class="recipe-ingredient-stock">Stok belum tercatat di tab ini.</small>
+                                            </div>
 
                                             <span class="recipe-ingredient-status"
                                                 data-state="{{ $isMissing ? 'missing' : 'checked' }}">
@@ -736,6 +752,44 @@
             const ingredients = saved === null ? [] : JSON.parse(saved);
 
             return Array.isArray(ingredients) ? ingredients : [];
+        }
+
+        function showRecipeIngredientStock(dialog) {
+            let pantryIngredients = [];
+
+            try {
+                pantryIngredients = readPantryIngredients();
+            } catch (error) {
+                console.warn('Stok Pantry tidak bisa dibaca di tab ini.', error);
+            }
+
+            const stockByName = new Map();
+
+            pantryIngredients.forEach((ingredient) => {
+                if (typeof ingredient?.name !== 'string'
+                    || typeof ingredient.quantity !== 'string'
+                    || !ingredient.quantity.trim()) {
+                    return;
+                }
+
+                const name = normalizeIngredient(ingredient.name);
+                const quantity = ingredient.quantity.trim();
+                const status = typeof ingredient.status === 'string' ? ingredient.status.trim() : '';
+                const description = status ? `${quantity} (${status})` : quantity;
+                const stock = stockByName.get(name) ?? [];
+
+                stock.push(description);
+                stockByName.set(name, stock);
+            });
+
+            dialog.querySelectorAll('[data-pantry-ingredient]').forEach((item) => {
+                const name = normalizeIngredient(item.dataset.pantryIngredient);
+                const stock = stockByName.get(name);
+
+                item.querySelector('.recipe-ingredient-stock').textContent = stock
+                    ? `Stok: ${stock.join(' · ')}`
+                    : 'Stok belum tercatat di tab ini.';
+            });
         }
 
         function removePantrySelection(name) {
@@ -874,6 +928,7 @@
             button.addEventListener('click', () => {
                 const dialog = document.getElementById(button.dataset.recipeDialog);
 
+                showRecipeIngredientStock(dialog);
                 dialog.showModal();
             });
         });
