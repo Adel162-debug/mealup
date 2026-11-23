@@ -1237,6 +1237,9 @@
 
         const pantryNavCount = document.querySelector('#mealup-pantry-count');
         const recipeNavCount = document.querySelector('#mealup-recipe-count');
+        const recipeNavLink = document.querySelector('#mealup-recipe-link');
+
+        recipeNavLink.href = recipeSelectionUrl(currentRecipeQuery.ingredients, currentRecipeQuery.use_soon);
 
         pantryNavCount.textContent = {{ $selectedIngredients->count() }};
         pantryNavCount.hidden = Number(pantryNavCount.textContent) === 0;

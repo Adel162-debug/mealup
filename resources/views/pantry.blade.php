@@ -649,6 +649,7 @@
     const selectVisibleCheckbox = document.querySelector('#pantry-select-visible');
     const pantryStorageKey = 'mealup.pantry.v1';
     const selectionForm = document.querySelector('#pantry-recipe-form');
+    const recipeNavLink = document.querySelector('#mealup-recipe-link');
     const pantryNavCount = document.querySelector('#mealup-pantry-count');
     const recipeNavCount = document.querySelector('#mealup-recipe-count');
     const selectionCount = document.querySelector('#pantry-selection-count');
@@ -766,6 +767,10 @@
                 selectionFields.append(useSoonField);
             }
         });
+        const recipeUrl = new URL(selectionForm.action);
+        recipeUrl.search = new URLSearchParams(new FormData(selectionForm)).toString();
+        recipeNavLink.href = recipeUrl.href;
+
         syncSelectVisibleCheckbox();
         savePantry();
     }

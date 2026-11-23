@@ -200,7 +200,7 @@
                     <span id="mealup-pantry-count" class="mealup-nav-count" hidden></span>
                 </a>
 
-                <a class="mealup-nav-item" href="{{ route('recipes.index') }}"
+                <a id="mealup-recipe-link" class="mealup-nav-item" href="{{ route('recipes.index') }}"
                    @if (request()->routeIs('recipes.index')) aria-current="page" @endif>
                     <svg class="mealup-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6c-3-2-6-2-9-1v14c3-1 6-1 9 1 3-2 6-2 9-1V5c-3-1-6-1-9 1zm0 0v14"/></svg>
                     Recipe
