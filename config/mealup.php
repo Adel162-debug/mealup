@@ -41,6 +41,44 @@ return [
             'Diamkan sebentar sebelum disajikan.',
         ],
     ],
-
+    [
+        'name' => 'Tempe Panggang Kecap',
+        'prep_cook_minutes' => 15,
+        'servings' => 2,
+        'category' => 'Snack',
+        'ingredients' => ['Tempe', 'Kecap Manis'],
+        'staples' => ['Minyak goreng'],
+        'steps' => [
+            'Iris tempe setebal satu sentimeter.',
+            'Olesi kedua sisi dengan kecap manis dan sedikit minyak.',
+            'Panggang di wajan dengan api sedang hingga kedua sisi kecokelatan.',
+        ],
+    ],
+    [
+        'name' => 'Pisang Madu Hangat',
+        'prep_cook_minutes' => 10,
+        'servings' => 1,
+        'category' => 'Dessert',
+        'ingredients' => ['Pisang', 'Madu'],
+        'staples' => ['Minyak goreng'],
+        'steps' => [
+            'Kupas pisang dan belah memanjang.',
+            'Masak kedua sisinya di wajan dengan sedikit minyak hingga keemasan.',
+            'Angkat dan beri madu sebelum disajikan.',
+        ],
+    ],
+    [
+        'name' => 'Mie Instan Sawi Putih',
+        'prep_cook_minutes' => 12,
+        'servings' => 1,
+        'category' => 'Others',
+        'ingredients' => ['Mie Instan', 'Sawi Putih'],
+        'staples' => ['Air'],
+        'steps' => [
+            'Cuci dan potong sawi putih.',
+            'Rebus mie sesuai petunjuk kemasan dan masukkan sawi pada menit terakhir.',
+            'Tambahkan bumbu dari kemasan dan sajikan.',
+        ],
+    ],
     ],
 ];

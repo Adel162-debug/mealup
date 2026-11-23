@@ -404,6 +404,22 @@
         @media (max-width: 767px) {
             .pantry-search { width: 100%; margin-inline-start: 0; }
         }
+        .pantry-table tr[data-out-of-stock="true"] .pantry-status,
+        .pantry-expiry-marker[data-urgent="true"] {
+            background: #f4e5e2;
+            color: #832f26;
+        }
+
+        .pantry-expiry-marker {
+            display: table;
+            margin: 4px auto 0;
+            padding: 3px 8px;
+            border-radius: 999px;
+            background: #fff0cd;
+            color: #714500;
+            font-size: .75rem;
+            font-weight: 700;
+        }
     </style>
 @endpush
 
@@ -459,13 +475,13 @@
     @php
     $ingredients = [
         ['name' => 'Chicken', 'category' => 'Meat', 'quantity' => '200 g',
-         'purchased' => '02/10/2026', 'expires' => '05/10/2026', 'status' => 'Good'],
+         'purchased' => today()->subDay()->format('d/m/Y'), 'expires' => today()->addDays(4)->format('d/m/Y'), 'status' => 'Good'],
 
         ['name' => 'Eggs', 'category' => 'Others', 'quantity' => '6 pcs',
-         'purchased' => '02/10/2026', 'expires' => '12/10/2026', 'status' => 'Fresh'],
+         'purchased' => today()->subDay()->format('d/m/Y'), 'expires' => today()->addDays(8)->format('d/m/Y'), 'status' => 'Fresh'],
 
         ['name' => 'Spinach', 'category' => 'Veggies', 'quantity' => '1 pack',
-         'purchased' => '02/10/2026', 'expires' => '03/10/2026', 'status' => 'Use Soon'],
+         'purchased' => today()->subDay()->format('d/m/Y'), 'expires' => today()->addDay()->format('d/m/Y'), 'status' => 'Use Soon'],
     ];
 @endphp
 
@@ -505,7 +521,7 @@
                     <td><span class="pantry-category">{{ $ingredient['category'] }}</span></td>
                     <td>{{ $ingredient['quantity'] }}</td>
                     <td>{{ $ingredient['purchased'] }}</td>
-                    <td>{{ $ingredient['expires'] }}</td>
+                    <td><span class="pantry-expiry-date">{{ $ingredient['expires'] ?: '—' }}</span></td>
                     <td>
                         <span class="pantry-status">{{ $ingredient['status'] }}</span>
                     </td>
@@ -654,21 +670,21 @@
     }
 
     selectAllButton.addEventListener('click', () => {
-        checkMatchingIngredients('tbody tr[data-ingredient-name] input[type="checkbox"]');
+        checkMatchingIngredients('tbody tr[data-ingredient-name] input[type="checkbox"]:enabled');
     });
 
     selectUseSoonButton.addEventListener('click', () => {
-        checkMatchingIngredients('tbody tr[data-status="Use Soon"] input[type="checkbox"]');
+        checkMatchingIngredients('tbody tr[data-status="Use Soon"] input[type="checkbox"]:enabled');
     });
 
     function getCheckedIngredients() {
-        return pantryTable.querySelectorAll('tbody input[type="checkbox"]:checked');
+        return pantryTable.querySelectorAll('tbody input[type="checkbox"]:enabled:checked');
     }
 
     function getVisibleCheckboxes() {
-    return Array.from(pantryTable.querySelectorAll(
-        'tbody tr[data-ingredient-name]:not([hidden]) input[type="checkbox"]'
-    ));
+        return Array.from(pantryTable.querySelectorAll(
+            'tbody tr[data-ingredient-name]:not([hidden]) input[type="checkbox"]:enabled'
+        ));
     }
 
     function syncSelectVisibleCheckbox() {
@@ -750,6 +766,7 @@
                 selectionFields.append(useSoonField);
             }
         });
+        syncSelectVisibleCheckbox();
         savePantry();
     }
 
@@ -804,6 +821,7 @@
         });
 
         emptyState.hidden = hasResults;
+        syncSelectVisibleCheckbox();
     }
 
     searchInput.addEventListener('input', filterIngredients);
@@ -855,7 +873,10 @@
 
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
-    checkbox.checked = checked;
+    const outOfStock = quantity.trim() === '0';
+    row.dataset.outOfStock = String(outOfStock);
+    checkbox.disabled = outOfStock;
+    checkbox.checked = !outOfStock && checked;
     checkbox.setAttribute('aria-label', `Pilih ${name}`);
     row.insertCell().append(checkbox);
 
@@ -886,13 +907,17 @@
     [
         quantity,
         formatDate(purchased),
-        formatDate(expires),
     ].forEach((value) => {
         row.insertCell().textContent = value;
     });
+    const expiryDate = document.createElement('span');
+    expiryDate.className = 'pantry-expiry-date';
+    expiryDate.textContent = formatDate(expires);
+    row.insertCell().append(expiryDate);
+
     const statusBadge = document.createElement('span');
     statusBadge.className = 'pantry-status';
-    statusBadge.textContent = status;
+    statusBadge.textContent = outOfStock ? 'Out of Stock' : status;
     row.insertCell().append(statusBadge);
 
     const editButton = document.createElement('button');
@@ -909,6 +934,42 @@
         const [day, month, year] = displayDate.trim().split('/');
 
         return year ? `${year}-${month}-${day}` : '';
+    }
+
+    function getIngredientExpiry(row) {
+        return toDateInputValue(row.querySelector('.pantry-expiry-date').textContent);
+    }
+
+    function expiryDaysLeft(expiry, today) {
+        const expiryDay = Date.parse(expiry + 'T00:00:00Z');
+        const currentDay = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+        return (expiryDay - currentDay) / 86400000;
+    }
+
+    function updateExpiryMarkers() {
+        const today = new Date();
+
+        pantryTable.querySelectorAll('.pantry-expiry-date').forEach((dateLabel) => {
+            const cell = dateLabel.parentElement;
+            const remaining = expiryDaysLeft(toDateInputValue(dateLabel.textContent), today);
+            let marker = cell.querySelector('.pantry-expiry-marker');
+
+            if (!Number.isFinite(remaining) || remaining > 3) {
+                marker?.remove();
+                return;
+            }
+
+            if (!marker) {
+                marker = document.createElement('span');
+                marker.className = 'pantry-expiry-marker';
+                cell.append(marker);
+            }
+
+            marker.dataset.urgent = String(remaining <= 0);
+            marker.textContent = remaining < 0 ? 'Expired'
+                : remaining === 0 ? 'Expires today'
+                : remaining === 1 ? '1 day left' : remaining + ' days left';
+        });
     }
 
     function openIngredientDialog(row = null) {
@@ -928,7 +989,7 @@
             categoryInput.value = row.dataset.category;
             quantityInput.value = row.cells[3].textContent.trim();
             purchaseInput.value = toDateInputValue(row.cells[4].textContent);
-            expiryInput.value = toDateInputValue(row.cells[5].textContent);
+            expiryInput.value = getIngredientExpiry(row);
             statusInput.value = row.dataset.status;
         }
 
@@ -1008,6 +1069,7 @@
         }
 
         filterIngredients();
+        updateExpiryMarkers();
         updateSelection();
         addIngredientForm.reset();
         addIngredientDialog.close();
@@ -1025,7 +1087,7 @@
             category: row.dataset.category,
             quantity: row.cells[3].textContent.trim(),
             purchased: toDateInputValue(row.cells[4].textContent),
-            expires: toDateInputValue(row.cells[5].textContent),
+            expires: getIngredientExpiry(row),
             status: row.dataset.status,
             checked: row.querySelector('input[type="checkbox"]').checked,
         }));
@@ -1066,10 +1128,17 @@
     function refreshPantryFromStorage() {
         restorePantry();
         filterIngredients();
+        updateExpiryMarkers();
         updateSelection();
     }
 
     refreshPantryFromStorage();
+
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            updateExpiryMarkers();
+        }
+    });
 
     window.addEventListener('pageshow', (event) => {
         if (event.persisted) {
