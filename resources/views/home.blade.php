@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meal Up - Home Dashboard</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -117,7 +116,6 @@
             margin-left: 271px;
             flex: 1;
         }
-        /* Gelombang be5a8.svg khusus Laravel Blade */
         .hero-header {
             background-image: url("{{ asset('assets/be5a8.svg') }}");
             background-repeat: no-repeat;
@@ -129,41 +127,40 @@
 <body class="bg-mealCream text-mealBrown font-sans antialiased selection:bg-amber-200">
 
     <div class="app-shell">
-<!-- SIDEBAR -->
-<aside id="sidebar" class="sidebar">
-    <a href="{{ url('/home') }}" class="meal-sidebar-brand">
-        <img src="{{ asset('assets/73d6a.png') }}" alt="Meal Up">
-    </a>
+        <!-- SIDEBAR -->
+        <aside id="sidebar" class="sidebar">
+            <a href="{{ url('/home') }}" class="meal-sidebar-brand">
+                <img src="{{ asset('assets/73d6a.png') }}" alt="Meal Up">
+            </a>
 
-    <nav class="meal-sidebar-menu" aria-label="Navigasi utama">
-        <a href="{{ url('/home') }}" class="meal-sidebar-item" aria-current="page">
-            <span class="meal-sidebar-icon" aria-hidden="true">⌂</span>
-            <span>Home</span>
-        </a>
+            <nav class="meal-sidebar-menu" aria-label="Navigasi utama">
+                <a href="{{ url('/home') }}" class="meal-sidebar-item" aria-current="page">
+                    <span class="meal-sidebar-icon" aria-hidden="true">⌂</span>
+                    <span>Home</span>
+                </a>
 
-        <button type="button" class="meal-sidebar-item" onclick="openDialog('pantry')">
-            <span class="meal-sidebar-icon" aria-hidden="true">▣</span>
-            <span>Pantry</span>
-        </button>
+                <button type="button" class="meal-sidebar-item" onclick="openDialog('pantry')">
+                    <span class="meal-sidebar-icon" aria-hidden="true">▣</span>
+                    <span>Pantry</span>
+                </button>
 
-        <button type="button" class="meal-sidebar-item" onclick="openDialog('recipes')">
-            <span class="meal-sidebar-icon" aria-hidden="true">▤</span>
-            <span>Recipe</span>
-        </button>
+                <button type="button" class="meal-sidebar-item" onclick="openDialog('recipes')">
+                    <span class="meal-sidebar-icon" aria-hidden="true">▤</span>
+                    <span>Recipe</span>
+                </button>
 
-        <button type="button" class="meal-sidebar-item" disabled>
-            <span class="meal-sidebar-icon" aria-hidden="true">★</span>
-            <span>Saved</span>
-        </button>
-    </nav>
+                <button type="button" class="meal-sidebar-item" disabled>
+                    <span class="meal-sidebar-icon" aria-hidden="true">★</span>
+                    <span>Saved</span>
+                </button>
+            </nav>
 
-    <div class="meal-sidebar-footer">
-        <button type="button" class="meal-sidebar-item" disabled>
-            <span class="meal-sidebar-icon" aria-hidden="true">↪</span>
-            <span>Logout</span>
-        </button>
-    </div>
-</aside>
+            <div class="meal-sidebar-footer">
+                <button type="button" class="meal-sidebar-item" disabled>
+                    <span class="meal-sidebar-icon" aria-hidden="true">↪</span>
+                    <span>Logout</span>
+                </button>
+            </div>
         </aside>
 
         <!-- MAIN CONTENT AREA -->
@@ -178,24 +175,21 @@
                         <p class="mt-4 text-[18px] lg:text-[20px] font-medium text-gray-700 max-w-lg">
                             Let's check what ingredients you have in your pantry and whip up something delicious today.
                         </p>
-                        <button onclick="openDialog('recipes')" class="mt-6 inline-flex items-center justify-center px-6 py-3 rounded-xl bg-mealAccent text-white font-semibold text-lg shadow-lg hover:bg-amber-700 transition cursor-pointer">
+                        <button type="button" onclick="openDialog('recipes')" class="mt-6 inline-flex items-center justify-center px-6 py-3 rounded-xl bg-mealAccent text-white font-semibold text-lg shadow-lg hover:bg-amber-700 transition cursor-pointer">
                             Find Recipes Now 🍳
                         </button>
                     </div>
 
                     <!-- AREA GAMBAR UTAMA UKURAN 640px x 660px + HIASAN SVG -->
                     <div class="relative w-[640px] h-[660px] flex items-center justify-center mx-auto lg:mx-0 z-10 pointer-events-none">
-                        
                         <img src="{{ asset('assets/cdea1.png') }}" alt="Delicious Dish" class="w-[640px] h-[660px] object-contain drop-shadow-2xl rotate-[5deg] z-10" />
 
-                        <!-- Hiasan SVG Doodle -->
                         <img src="{{ asset('assets/375a6.svg') }}" alt="" class="absolute top-[80px] left-[40px] w-12 h-12 rotate-[-15deg] z-20 opacity-90" />
                         <img src="{{ asset('assets/84885.svg') }}" alt="" class="absolute top-[120px] right-[60px] w-14 h-14 rotate-[25deg] z-20 opacity-90" />
                         <img src="{{ asset('assets/b9d49.svg') }}" alt="" class="absolute bottom-[100px] left-[80px] w-16 h-16 rotate-[10deg] z-20 opacity-90" />
                         <img src="{{ asset('assets/d1ff1.svg') }}" alt="" class="absolute bottom-[80px] right-[90px] w-14 h-14 rotate-[-20deg] z-20 opacity-90" />
                         <img src="{{ asset('assets/ef6de.svg') }}" alt="" class="absolute top-[280px] left-[10px] w-12 h-12 rotate-[45deg] z-20 opacity-90" />
                         <img src="{{ asset('assets/164fe.svg') }}" alt="" class="absolute top-[240px] right-[20px] w-12 h-12 rotate-[-30deg] z-20 opacity-90" />
-
                     </div>
                 </div>
             </header>
@@ -206,13 +200,12 @@
                 <section class="rounded-2xl p-8 lg:p-10 bg-mealBrown text-white shadow-2xl">
                     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
                         <h2 class="text-[32px] lg:text-[38px] font-bold tracking-tight">Use Soon</h2>
-                        <button onclick="openDialog('pantry')" class="px-5 py-2.5 rounded-lg bg-mealAccent text-white font-semibold hover:bg-amber-700 transition cursor-pointer shadow-md">
+                        <button type="button" onclick="openDialog('pantry')" class="px-5 py-2.5 rounded-lg bg-mealAccent text-white font-semibold hover:bg-amber-700 transition cursor-pointer shadow-md">
                             Manage Pantry
                         </button>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-                        <!-- Card 1: Spinach -->
                         <div class="overflow-hidden rounded-xl bg-[#371f16] text-white shadow-lg hover:-translate-y-1.5 transition border border-white/10">
                             <div class="h-[180px] overflow-hidden bg-white flex items-center justify-center p-2">
                                 <img src="{{ asset('assets/59b25.png') }}" alt="Spinach" class="w-full h-full object-contain" />
@@ -222,7 +215,6 @@
                                 <span class="inline-block mt-3 px-3 py-1 bg-mealAccent text-white text-xs rounded-full font-semibold">Expires tomorrow</span>
                             </div>
                         </div>
-                        <!-- Card 2: Tomat -->
                         <div class="overflow-hidden rounded-xl bg-[#371f16] text-white shadow-lg hover:-translate-y-1.5 transition border border-white/10">
                             <div class="h-[180px] overflow-hidden bg-white flex items-center justify-center p-2">
                                 <img src="{{ asset('assets/9e8de.png') }}" alt="Tomat" class="w-full h-full object-contain" />
@@ -232,7 +224,6 @@
                                 <span class="inline-block mt-3 px-3 py-1 bg-rose-700 text-white text-xs rounded-full font-semibold">Expires in 2 days</span>
                             </div>
                         </div>
-                        <!-- Card 3: Chicken -->
                         <div class="overflow-hidden rounded-xl bg-[#371f16] text-white shadow-lg hover:-translate-y-1.5 transition border border-white/10">
                             <div class="h-[180px] overflow-hidden bg-white flex items-center justify-center p-2">
                                 <img src="{{ asset('assets/13049.png') }}" alt="Chicken" class="w-full h-full object-contain" />
@@ -252,7 +243,6 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-                        <!-- Meal Card 1: Soto Ayam Banjar -->
                         <div class="grid grid-cols-[40%_60%] items-center overflow-hidden rounded-2xl bg-white text-mealBrown shadow-md border border-mealBrown/10 hover:shadow-xl transition">
                             <img src="{{ asset('assets/9c08e.png') }}" alt="Soto Ayam Banjar" class="w-full h-full min-h-[140px] object-cover" />
                             <div class="p-5 flex flex-col justify-center">
@@ -260,7 +250,6 @@
                                 <p class="mt-1 text-xs text-gray-600">Traditional warm aromatic soup</p>
                             </div>
                         </div>
-                        <!-- Meal Card 2: Ayam Serundeng -->
                         <div class="grid grid-cols-[40%_60%] items-center overflow-hidden rounded-2xl bg-white text-mealBrown shadow-md border border-mealBrown/10 hover:shadow-xl transition">
                             <img src="{{ asset('assets/67fe4.png') }}" alt="Ayam Serundeng" class="w-full h-full min-h-[140px] object-cover" />
                             <div class="p-5 flex flex-col justify-center">
@@ -277,14 +266,13 @@
     <!-- MODAL / DIALOG POPUP -->
     <div id="appModal" class="fixed inset-0 z-50 hidden place-items-center bg-black/60 px-5 backdrop-blur-sm">
         <div class="relative w-full max-w-[620px] max-h-[calc(100vh-48px)] overflow-y-auto rounded-[18px] bg-mealCream p-[42px] shadow-2xl">
-            <button onclick="closeDialog()" class="absolute right-5 top-4 w-9 h-9 rounded-full bg-gray-200 text-mealBrown font-bold text-xl flex items-center justify-center hover:bg-gray-300 transition cursor-pointer border-0">
+            <button type="button" onclick="closeDialog()" class="absolute right-5 top-4 w-9 h-9 rounded-full bg-gray-200 text-mealBrown font-bold text-xl flex items-center justify-center hover:bg-gray-300 transition cursor-pointer border-0">
                 &times;
             </button>
             <div id="modalContent"></div>
         </div>
     </div>
 
-    <!-- SCRIPT INTERAKTIF -->
     <script>
         function openDialog(type) {
             const modal = document.getElementById('appModal');
@@ -312,7 +300,7 @@
                             <span class="px-3 py-1 bg-amber-100 text-amber-800 text-xs rounded-full font-semibold">Active</span>
                         </div>
                     </div>
-                    <button onclick="alert('Fitur tambah bahan aktif!')" class="mt-6 w-full py-3 rounded-lg bg-mealBrown text-white font-semibold hover:bg-mealAccent transition cursor-pointer">
+                    <button type="button" onclick="alert('Fitur tambah bahan aktif!')" class="mt-6 w-full py-3 rounded-lg bg-mealBrown text-white font-semibold hover:bg-mealAccent transition cursor-pointer">
                         + Add New Ingredient
                     </button>
                 `;
@@ -322,7 +310,7 @@
                     <h2 class="mt-1 mb-6 text-[32px] font-bold text-mealBrown">Smart Recipe Generator</h2>
                     <div class="flex gap-2">
                         <input type="text" placeholder="Masukkan bahan yang ingin dimasak..." class="flex-1 border-2 border-amber-200 rounded-lg p-3 bg-white focus:outline-none focus:border-mealAccent">
-                        <button onclick="alert('Mencari resep terbaik...')" class="px-5 py-3 rounded-lg bg-mealBrown text-white font-semibold hover:bg-mealAccent transition cursor-pointer">Cari</button>
+                        <button type="button" onclick="alert('Mencari resep terbaik...')" class="px-5 py-3 rounded-lg bg-mealBrown text-white font-semibold hover:bg-mealAccent transition cursor-pointer">Cari</button>
                     </div>
                     <div class="mt-6 p-4 bg-white rounded-xl shadow-sm">
                         <h4 class="font-bold text-lg text-mealBrown">Rekomendasi Hari Ini:</h4>

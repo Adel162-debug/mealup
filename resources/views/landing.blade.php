@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meal Up - Food Waste Prevention</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -26,7 +25,7 @@
     <header class="sticky top-0 z-40 h-[92px] bg-white lg:h-[139px] shadow-sm">
         <div class="mx-auto flex h-full max-w-[1440px] items-center px-5 sm:px-8 lg:px-10">
             <!-- Logo -->
-            <button onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" class="shrink-0 transition-transform hover:scale-105 cursor-pointer bg-transparent border-0">
+            <button type="button" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" class="shrink-0 transition-transform hover:scale-105 cursor-pointer bg-transparent border-0">
                 <img alt="Meal Up" class="h-auto w-[132px] lg:w-[188px]" src="{{ asset('assets/73d6a.png') }}" />
             </button>
 
@@ -39,25 +38,31 @@
 
             <!-- Tombol Auth -->
             <div class="ml-auto flex items-center gap-2.5 sm:gap-3">
-                <button onclick="openModal('signin')" class="min-w-[72px] sm:min-w-[92px] lg:w-[173px] cursor-pointer rounded-lg border border-black bg-white px-3 py-2 text-xs sm:text-sm lg:text-lg font-semibold text-mealBrown hover:bg-mealCream transition">
+                <a href="{{ url('/signin') }}" class="inline-flex items-center justify-center min-w-[72px] sm:min-w-[92px] lg:w-[173px] cursor-pointer rounded-lg border border-black bg-white px-3 py-2 text-xs sm:text-sm lg:text-lg font-semibold text-mealBrown hover:bg-mealCream transition">
                     Sign in
-                </button>
-                <button onclick="openModal('signup')" class="min-w-[72px] sm:min-w-[92px] lg:w-[173px] cursor-pointer rounded-lg bg-mealBrown px-3 py-2 text-xs sm:text-sm lg:text-lg font-semibold text-white hover:bg-mealAccent transition shadow-md">
-                    Sign up
-                </button>
+                </a>
+                <a href="{{ url('/signup') }}" class="inline-flex items-center justify-center min-w-[72px] sm:min-w-[92px] lg:w-[173px] cursor-pointer rounded-lg bg-mealBrown px-3 py-2 text-xs sm:text-sm lg:text-lg font-semibold text-white hover:bg-mealAccent transition shadow-md">
+    Sign up
+</a>
             </div>
         </div>
     </header>
 
     <!-- MAIN CONTENT -->
-    <main>
-        <!-- HERO SECTION DENGAN SVG GELOMBANG ATAS -->
-        <section id="about" class="relative isolate min-h-[760px] overflow-hidden px-5 pb-20 pt-16 sm:px-8 lg:min-h-[895px] lg:px-10 lg:pt-0 flex items-center">
-            
-            <!-- Gelombang SVG Hero -->
-            <img alt="" class="pointer-events-none absolute -right-[280px] -top-[250px] -z-10 hidden h-[1120px] w-[1048px] rotate-[-88.77deg] lg:block" src="{{ asset('assets/82f3e.svg') }}" />
+    <main class="relative">
+        <!-- BACKGROUND FOTO SAMAR IKUT SCROLL (ba623.png) -->
+        <img
+            src="{{ asset('assets/ba623.png') }}"
+            alt=""
+            aria-hidden="true"
+            class="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-50 select-none"
+        />
 
-            <div class="mx-auto grid max-w-[1360px] items-center lg:grid-cols-[47%_53%] w-full">
+        <!-- HERO SECTION DENGAN SVG GELOMBANG ATAS -->
+        <section id="about" class="relative z-10 min-h-[760px] overflow-hidden px-5 pb-20 pt-16 sm:px-8 lg:min-h-[895px] lg:px-10 lg:pt-0 flex items-center">
+            <img alt="" class="pointer-events-none absolute -right-[280px] -top-[250px] z-0 hidden h-[1120px] w-[1048px] rotate-[-88.77deg] lg:block" src="{{ asset('assets/82f3e.svg') }}" />
+
+            <div class="mx-auto grid max-w-[1360px] items-center lg:grid-cols-[47%_53%] w-full relative z-10">
                 <div class="relative z-20 pt-4 lg:pt-0">
                     <h1 class="text-[52px] leading-[1.08] sm:text-[66px] lg:text-[90px] font-bold">
                         <span class="text-mealAccent">Cook “less” with</span> Meal Up
@@ -65,7 +70,7 @@
                     <p class="mt-7 max-w-[470px] text-base leading-relaxed text-black lg:ml-[5px] lg:mt-8 lg:text-[22px]">
                         lorem ipsum jabaolhdsbdibdudb<br>djbdjdbjbdjbjddvd
                     </p>
-                    <button onclick="scrollToFeatures()" class="mt-8 min-h-[66px] w-[260px] rounded-lg bg-mealBrown px-6 py-4 text-[22px] lg:text-[32px] font-semibold text-white hover:bg-mealAccent transition shadow-xl cursor-pointer">
+                    <button type="button" onclick="scrollToFeatures()" class="mt-8 min-h-[66px] w-[260px] rounded-lg bg-mealBrown px-6 py-4 text-[22px] lg:text-[32px] font-semibold text-white hover:bg-mealAccent transition shadow-xl cursor-pointer">
                         Get Started!
                     </button>
                 </div>
@@ -86,15 +91,15 @@
         </section>
 
         <!-- FEATURES SECTION -->
-        <section id="features" class="relative isolate overflow-hidden px-5 pb-24 pt-16 sm:px-8 lg:min-h-[845px] lg:px-10 lg:pb-[114px] lg:pt-[88px] bg-amber-50/30">
-            <img alt="" class="pointer-events-none absolute -right-[365px] top-[18px] -z-20 h-[760px] w-[650px] -scale-y-100 rotate-[-91deg] opacity-80" src="{{ asset('assets/6a3ac.svg') }}" />
-            <img alt="" class="pointer-events-none absolute -bottom-[420px] -left-[320px] -z-20 h-[760px] w-[650px] -scale-y-100 rotate-[-91deg] opacity-80" src="{{ asset('assets/6a3ac.svg') }}" />
+        <section id="features" class="relative z-10 overflow-hidden px-5 pb-24 pt-16 sm:px-8 lg:min-h-[845px] lg:px-10 lg:pb-[114px] lg:pt-[88px]">
+            <img alt="" class="pointer-events-none absolute -right-[365px] top-[18px] z-0 h-[760px] w-[650px] -scale-y-100 rotate-[-91deg] opacity-80" src="{{ asset('assets/6a3ac.svg') }}" />
+            <img alt="" class="pointer-events-none absolute -bottom-[420px] -left-[320px] z-0 h-[760px] w-[650px] -scale-y-100 rotate-[-91deg] opacity-80" src="{{ asset('assets/6a3ac.svg') }}" />
 
-            <h2 class="text-center text-[48px] sm:text-[60px] lg:text-[75px] font-bold text-mealBrown">
+            <h2 class="relative z-10 text-center text-[48px] sm:text-[60px] lg:text-[75px] font-bold text-mealBrown">
                 Our Features
             </h2>
 
-            <div class="mx-auto mt-14 grid max-w-[1220px] gap-8 md:grid-cols-3 lg:mt-[72px] lg:gap-[66px]">
+            <div class="relative z-10 mx-auto mt-14 grid max-w-[1220px] gap-8 md:grid-cols-3 lg:mt-[72px] lg:gap-[66px]">
                 <article class="group rounded-[10px] bg-mealBrown p-[25px] text-white shadow-lg transition duration-300 hover:-translate-y-3">
                     <div class="aspect-square overflow-hidden rounded-[10px] bg-white">
                         <img alt="Pantry" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" src="{{ asset('assets/2aef4.png') }}" />
@@ -147,19 +152,17 @@
         </div>
     </footer>
 
-    <!-- MODAL POPUP SIGN IN / SIGN UP -->
+    <!-- MODAL POPUP SIGN UP -->
     <div id="authModal" class="fixed inset-0 z-50 hidden place-items-center bg-black/60 px-5">
         <div class="relative w-full max-w-md rounded-2xl bg-mealCream p-8 shadow-2xl">
-            <button onclick="closeModal()" class="absolute right-5 top-4 text-3xl leading-none text-mealBrown hover:rotate-90 transition-transform cursor-pointer bg-transparent border-0">
+            <button type="button" onclick="closeModal()" class="absolute right-5 top-4 text-3xl leading-none text-mealBrown hover:rotate-90 transition-transform cursor-pointer bg-transparent border-0">
                 &times;
             </button>
             <img class="mb-6 h-auto w-36" src="{{ asset('assets/73d6a.png') }}" alt="Meal Up" />
-            
             <div id="modalBody"></div>
         </div>
     </div>
 
-    <!-- JAVASCRIPT -->
     <script>
         function scrollToFeatures() {
             document.getElementById('features').scrollIntoView({ behavior: 'smooth' });
@@ -168,18 +171,15 @@
         function openModal(mode) {
             const modal = document.getElementById('authModal');
             const modalBody = document.getElementById('modalBody');
-            const isSignup = mode === 'signup';
 
             modalBody.innerHTML = `
-                <h2 class="text-3xl font-bold text-mealBrown">${isSignup ? 'Create an account' : 'Welcome back'}</h2>
-                <p class="mt-2 text-sm text-[#6d554b]">${isSignup ? 'Start making the most of every ingredient.' : 'Sign in to continue planning your meals.'}</p>
-                <form class="mt-7 space-y-4" onsubmit="handleFormSubmit(event, '${mode}')">
-                    ${isSignup ? `
-                        <label class="block text-sm font-semibold text-mealBrown">
-                            Name
-                            <input class="mt-1.5 w-full rounded-lg border border-mealBrown/30 bg-white p-3 text-mealBrown focus:outline-none focus:ring-2 focus:ring-mealAccent" placeholder="Your name" required type="text">
-                        </label>
-                    ` : ''}
+                <h2 class="text-3xl font-bold text-mealBrown">Create an account</h2>
+                <p class="mt-2 text-sm text-[#6d554b]">Start making the most of every ingredient.</p>
+                <form class="mt-7 space-y-4" onsubmit="handleFormSubmit(event)">
+                    <label class="block text-sm font-semibold text-mealBrown">
+                        Name
+                        <input class="mt-1.5 w-full rounded-lg border border-mealBrown/30 bg-white p-3 text-mealBrown focus:outline-none focus:ring-2 focus:ring-mealAccent" placeholder="Your name" required type="text">
+                    </label>
                     <label class="block text-sm font-semibold text-mealBrown">
                         Email
                         <input class="mt-1.5 w-full rounded-lg border border-mealBrown/30 bg-white p-3 text-mealBrown focus:outline-none focus:ring-2 focus:ring-mealAccent" placeholder="you@example.com" required type="email">
@@ -189,7 +189,7 @@
                         <input class="mt-1.5 w-full rounded-lg border border-mealBrown/30 bg-white p-3 text-mealBrown focus:outline-none focus:ring-2 focus:ring-mealAccent" placeholder="At least 6 characters" required type="password" minlength="6">
                     </label>
                     <button type="submit" class="w-full rounded-lg bg-mealBrown py-3 text-white font-semibold hover:bg-mealAccent transition shadow-md cursor-pointer mt-2">
-                        ${isSignup ? 'Sign up' : 'Sign in'}
+                        Sign up
                     </button>
                 </form>
             `;
@@ -203,10 +203,9 @@
             modal.classList.add('hidden');
         }
 
-        function handleFormSubmit(e, mode) {
+        function handleFormSubmit(e) {
             e.preventDefault();
-            alert(mode === 'signup' ? 'Akun berhasil dibuat! Mengalihkan ke beranda...' : 'Login berhasil! Mengalihkan ke beranda...');
-            window.location.href = '/home'; // Nanti bisa disesuaikan route Laravel-nya
+            window.location.href = "{{ url('/home') }}";
         }
 
         window.onclick = function(event) {
